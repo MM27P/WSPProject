@@ -11,7 +11,7 @@ server <- function(input, output) {
   data1 <- reactive({
     input$Ind
   })
-  data2 <- reactive({
+  data2 <- reactive({                                                                                             
     input$Dep
   })
   
@@ -24,6 +24,13 @@ server <- function(input, output) {
     hist(mtcars[[data1()]])
   }) 
   #end
+
+
+  observeEvent(input$button, {
+    s= c("set12", "set22", "set32", "set42", "set52");
+         reactive(s);
+  })
+
   
   #iamonds2 = diamonds[sample(nrow(diamonds), 1000), ]
   output$mytable1 <- DT::renderDataTable({
