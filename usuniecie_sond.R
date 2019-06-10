@@ -33,14 +33,14 @@ usuniecie_sond = function(ExprSet){
     TAB[,5]=sr_adeno
     TAB[,6]=sr_squamous
     TAB[,7]=statistic
-    TAB[,8]=pval
-    TAB[,9]=p_val_skorygowane
+    TAB[,8]=p_wartosc
+    TAB[,9]=p_wartosc_skorygowane
     head(TAB) 
     if (sort_criterion>1){
-      ind_sort=sort(p_val_skorygowane,index=TRUE)$ix
+      ind_sort=sort(p_wartosc_skorygowane,index=TRUE)$ix
       TAB=TAB[ind_sort[1:sort_criterion],]}
     if (sort_criterion<1){ 
-      ind_sort=which(p_val_skorygowane<sort_criterion)
+      ind_sort=which(p_wartosc_skorygowane<sort_criterion)
       TAB=TAB[ind_sort,]}
     if (col_nr!=0){
       ind_sort=sort(TAB[col_nr,],index=TRUE)$ix
