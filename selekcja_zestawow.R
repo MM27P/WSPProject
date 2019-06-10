@@ -24,8 +24,8 @@ usuniecie_sond = function(ExprSet){
     symbol=unlist(mget(featureNames(ExprSet),env=gahgu95av2SYMBOL)) 
     genNames=unlist(mget(featureNames(ExprSet),env=gahgu95av2GENENAME))
     TAB=array(dim=c(dim(expr)[1],9))
-    colnames(TAB)=c("FerrariID","Symbol","opis","fold change","srednia w gr.ADENO","srednia w gr.NORMAL","Wartosc statystyki t",
-                    "p-wartosc","skorygowana p-wartosc")
+    colnames(TAB)=c("FerrariID","Symbol","opis","fold_change","srednia_w_gr_ADENO","srednia_w_gr_NORMAL","Wartosc_statystyki_t",
+                    "p-wartosc","skorygowana_p-wartosc")
     TAB[,1]=featureNames(ExprSet)
     TAB[,2]=symbol
     TAB[,3]=genNames
@@ -35,6 +35,8 @@ usuniecie_sond = function(ExprSet){
     TAB[,7]=statistic
     TAB[,8]=p_wartosc
     TAB[,9]=p_wartosc_skorygowane
+    #zwrócić tu tabelę
+    TAB_ALL=TAB
     head(TAB) 
     if (sort_criterion>1){
       ind_sort=sort(p_wartosc_skorygowane,index=TRUE)$ix
@@ -50,9 +52,11 @@ usuniecie_sond = function(ExprSet){
     png("heatmap.png")
     heatmap.2(ekspr_wybrane)
     dev.off()
-    return(TAB)
+    return(list(TAB,TAB_ALL))
+    
   }
   
 
 
 summary_table(ExprSet, method='holm', sort_criterion=15, col_nr=5, sep=',')
+
