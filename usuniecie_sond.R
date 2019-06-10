@@ -1,14 +1,13 @@
-## Usuniecie 5% sond o min i max œredniej ekspresji
 usuniecie_sond = function(ExprSet){
- 
+  
   dane_sort = sort(rowMeans(exprs(ExprSet)),index.return=T)
-  #iloœæ zestawów po reannotacji
+  #iloÅ“Ã¦ zestawÃ³w po reannotacji
   sondy_zestawy= dim(ExprSet)[1]
-  #sondy do usuniêcia
+  #sondy do usuniÃªcia
   sondy_usun =round(dim(ExprSet)[1]*0.025)
   indeksy_usun=dane_sort$ix[c(1:sondy_usun,(sondy_zestawy-sondy_usun):sondy_zestawy)]
   nowy_ExprSet=ExprSet[-indeksy_usun,] 
-  
+}
   #return (nowy_ExprSet)
   
   summary_table=function(nowy_ExprSet, method, sort_criterion, col_nr, sep){
@@ -17,21 +16,21 @@ usuniecie_sond = function(ExprSet){
     expr=exprs(nowy_ExprSet)
     sr_A=rowMeans(expr[,adeno])
     sr_S=rowMeans(expr[,squamous])
-    FC=sr_adeno/sr_squamous
+    FC=sr_A/sr_S
     statistic=apply(expr,1,function(x) t.test(x[adeno],x[squamous])$statistic) 
     p_wartosc=apply(expr,1,function(x) t.test(x[adeno],x[squamous])$p.val)
-    p_wartosc_skorygowane=p.adjust(pval, method = method)
+    p_wartosc_skorygowane=p.adjust(p_wartosc, method = method)
     symbol=unlist(mget(featureNames(ExprSet),env=gahgu95av2SYMBOL)) 
     genNames=unlist(mget(featureNames(ExprSet),env=gahgu95av2GENENAME))
     TAB=array(dim=c(dim(expr)[1],9))
-    colnames(TAB)=c("FerrariID","Symbol","description","fold change","orednia w gr.ADENO","orednia w gr.NORMAL","t-statistics",
-                    "p-value","corrected p-value")
+    colnames(TAB)=c("FerrariID","Symbol","opis","fold change","srednia w gr.ADENO","srednia w gr.NORMAL","Wartosc statystyki t",
+                    "p-wartosc","skorygowana p-wartosc")
     TAB[,1]=featureNames(ExprSet)
     TAB[,2]=symbol
     TAB[,3]=genNames
     TAB[,4]=FC
-    TAB[,5]=sr_adeno
-    TAB[,6]=sr_squamous
+    TAB[,5]=sr_A
+    TAB[,6]=sr_S
     TAB[,7]=statistic
     TAB[,8]=p_wartosc
     TAB[,9]=p_wartosc_skorygowane
@@ -53,4 +52,6 @@ usuniecie_sond = function(ExprSet){
     return(TAB)
   }
   
- }
+
+
+summary_table(ExprSet, method='holm', sort_criterion=15, col_nr=5, sep=',')
