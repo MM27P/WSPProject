@@ -1,3 +1,4 @@
+#część II
 usuniecie_sond = function(ExprSet){
   
   dane_sort = sort(rowMeans(exprs(ExprSet)),index.return=T)
