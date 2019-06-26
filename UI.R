@@ -3,7 +3,7 @@ library(DT)
 
 
 
-
+s = c("set1", "set2", "set3", "set4", "set5") 
 LoadPanel =panel(fileInput("file1", "Wybierz pli CSV",
                            accept = c(
                              "text/csv",
@@ -24,7 +24,9 @@ ui <- fluidPage(
       panel("Content goes here",
         checkboxGroupInput("show_vars", "Loaded set",
                            names(diamonds), selected =  names(diamonds)),
-        LoadPanel
+        LoadPanel,
+        tags$head(tags$script(src = "message-handler.js")),
+        actionButton("do", "Click Me")
       )
     ),
     mainPanel(

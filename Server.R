@@ -27,9 +27,12 @@ server <- function(input, output) {
 
 
   observeEvent(input$button, {
-    s= c("set12", "set22", "set32", "set42", "set52");
-         reactive(s);
+
   })
+  
+  observeEvent(input$do, {
+    session$sendCustomMessage(type = 'testmessage',
+                              message = 'Thank you for clicking')})
 
   
   #iamonds2 = diamonds[sample(nrow(diamonds), 1000), ]

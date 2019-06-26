@@ -3,12 +3,13 @@ library(shinyWidgets)
 library(ggplot2) 
 source("UI.R")
 source("Server.R")
+
 # choose columns to display
 
 #Student wykład : Plotly, selectizeinput
 
 
-s = c("set1", "set2", "set3", "set4", "set5") 
+
 #smoke <- matrix(c(51,43,22,92,28,21,68,22,9),ncol=3,byrow=TRUE)
 #colnames(smoke) <- c("Symbol","Id","Opis")
 #rownames(smoke) <- c("Gen1","Gen2","Gen3")
