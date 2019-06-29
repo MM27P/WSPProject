@@ -1,49 +1,52 @@
 server <- function(input, output) {
   
-  # Return the requested dataset ----
-  # By declaring datasetInput as a reactive expression we ensure
-  # that:
-  #
-  # 1. It is only called when the inputs it depends on changes
-  # 2. The computation and result are shared by all the callers,
-  #    i.e. it only executes a single time
-  datasetInput <- reactive({
-    switch(input$dataset,
-           "rock" = rock,
-           "pressure" = pressure,
-           "cars" = cars)
+  # choose columns to display
+  smoke <- matrix(c(51,43,22,92,28,21,68,22,9),ncol=3,byrow=TRUE)
+  colnames(smoke) <- c("Symbol","Id","Opis")
+  rownames(smoke) <- c("Gen1","Gen2","Gen3")
+  smoke <- as.table(smoke)
+
+  
+  #Histogram code
+  data1 <- reactive({
+    input$Ind
+  })
+  data2 <- reactive({                                                                                             
+    input$Dep
   })
   
-  # Create caption ----
-  # The output$caption is computed based on a reactive expression
-  # that returns input$caption. When the user changes the
-  # "caption" field:
-  #
-  # 1. This function is automatically called to recompute the output
-  # 2. New caption is pushed back to the browser for re-display
-  #
-  # Note that because the data-oriented reactive expressions
-  # below don't depend on input$caption, those expressions are
-  # NOT called when input$caption changes
-  output$caption <- renderText({
-    input$caption
+  output$BoxPlot <- renderPlot({
+    boxplot(get(data2()) ~ get(data1()) , data=mtcars)
   })
   
-  # Generate a summary of the dataset ----
-  # The output$summary depends on the datasetInput reactive
-  # expression, so will be re-executed whenever datasetInput is
-  # invalidated, i.e. whenever the input$dataset changes
-  output$summary <- renderPrint({
-    dataset <- datasetInput()
-    summary(dataset)
+  output$Hist <- renderPlot({
+    req(data1())
+    hist(mtcars[[data1()]])
+  }) 
+  #end
+
+
+  observeEvent(input$button, {
+
   })
   
-  # Show the first "n" observations ----
-  # The output$view depends on both the databaseInput reactive
-  # expression and input$obs, so it will be re-executed whenever
-  # input$dataset or input$obs is changed
-  output$view <- renderTable({
-    head(datasetInput(), n = input$obs)
+  observeEvent(input$do, {
+    session$sendCustomMessage(type = 'testmessage',
+                              message = 'Thank you for clicking')})
+
+  
+  #iamonds2 = diamonds[sample(nrow(diamonds), 1000), ]
+  output$mytable1 <- DT::renderDataTable({
+    DT::datatable(  diamonds[, input$show_vars, drop = FALSE])
   })
   
+  # sorted columns are colored now because CSS are attached to them
+  output$mytable2 <- DT::renderDataTable({
+    DT::datatable(mtcars, options = list(orderClasses = TRUE))
+  })
+  
+  # customize the length drop-down menu; display 5 rows per page by default
+  output$mytable3 <- DT::renderDataTable({
+    DT::datatable(iris, options = list(lengthMenu = c(5, 30, 50), pageLength = 5))
+  })
 }
