@@ -19,14 +19,16 @@ ui <- fluidPage(
   title = "Examples of DataTables",
   sidebarLayout(
     sidebarPanel(
-      radioButtons(inputId="choice", label="Loaded set", 
+      radioButtons(inputId="choice", label="Loaded sets", 
                    choices=s),
+      uiOutput("moreControls"),
       panel("Content goes here",
         checkboxGroupInput("show_vars", "Loaded set",
                            names(diamonds), selected =  names(diamonds)),
         LoadPanel,
         tags$head(tags$script(src = "message-handler.js")),
-        actionButton("do", "Click Me")
+        actionButton("do", "Click Me"),
+        actionButton("do2", "Click Me")
       )
     ),
     mainPanel(

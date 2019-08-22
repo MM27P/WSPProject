@@ -1,10 +1,7 @@
-server <- function(input, output) {
+test = c("set12", "set22", "set32", "set42", "set52") 
+
+server <- function(input, output,session) {
   
-  # choose columns to display
-  smoke <- matrix(c(51,43,22,92,28,21,68,22,9),ncol=3,byrow=TRUE)
-  colnames(smoke) <- c("Symbol","Id","Opis")
-  rownames(smoke) <- c("Gen1","Gen2","Gen3")
-  smoke <- as.table(smoke)
 
   
   #Histogram code
@@ -25,14 +22,21 @@ server <- function(input, output) {
   }) 
   #end
 
+  observeEvent(input$do, {  output$moreControls <- renderUI({
+    radioButtons(inputId="choice", label="Loaded sets", 
+                 choices=test) })
+  })  
 
-  observeEvent(input$button, {
-
-  })
+  observeEvent(input$do2, {
+    x <- input$choice 
+    updateRadioButtons(session, "choice",
+                       label = paste("radioButtons label", x),
+                       choices = x,
+                       selected = x
+    )
+    }
+  )  
   
-  observeEvent(input$do, {
-    session$sendCustomMessage(type = 'testmessage',
-                              message = 'Thank you for clicking')})
 
   
   #iamonds2 = diamonds[sample(nrow(diamonds), 1000), ]

@@ -1,0 +1,20 @@
+-AGATA
+fajna stronka brainnarray (spytac potem agate)
+
+-hitmap (napisała funkcję)
+
+-exporta to excel (date frame)
+
+
+Fukncja exporta
+Exprset na wejściu w postaci surowego pliku, funkcja dorabia adnotacje
+wypluwa exprSet
+-Jedne expresion set i jeden plik z adnotacjami
+
+- lista kategorii gsee przy metodzie od Dagi
+-Pogrubione na niebiesko, 
+
+TODO REALNE #PO SPOTKANIU:
+-Wczytywanie pliku expreset oraz pliku z adnotacjami->KOnwersja oznaczen
+-Selekcja genów, wybó genó przez uzytkownika z listy z GENSEA, sorotwanie przez pvalue fnormal
+-Eskportowanie do exela oraz bitmapy
