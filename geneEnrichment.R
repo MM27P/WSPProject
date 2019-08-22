@@ -8,6 +8,8 @@ geneEnrichment <- function(selection_results, genesets, method = "geneSetTest", 
         gene_identifier <- "SYMBOL"
       else
         gene_identifier <- "ENTREZID"
+      no_duplicates <- findLargest(as.character(selection_results$PROBEID),selection_results$t_statistic,"hgu95av2")
+      selection_results <- selection_results[no_duplicates,]
       geneset_ids<-lapply(1:length(genesets),function(x){which(selection_results[,gene_identifier] %in% genesets[[x]])})
       names(geneset_ids) <- names(genesets)
       if(method=="geneSetTest"){

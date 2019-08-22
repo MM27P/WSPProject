@@ -18,6 +18,7 @@ library(gplots)
 library(Biobase)
 library(msigdbr)
 library(affycoretools)
+library(genefilter)
 BiocManager::install("hgu95av2.db")
 library(hgu95av2.db)
 
@@ -53,7 +54,7 @@ p_threshold <- 0.05
 diff_genes <- wyniki[which(wyniki$pval_adjusted<p_threshold),]
   
 source("importGenesets.R")
-test<-importGeneSets(c("C2","MIR","CP"),gene_identifier = "SYMBOL")
+test<-importGeneSets(c("MIR","CP"),gene_identifier = "SYMBOL")
 
 source("geneEnrichment.R")
 test_gst <- geneEnrichment(tabletest[[2]],test)
@@ -73,6 +74,13 @@ writeData(wb,sheet=1,diff_genes)
 writeData(wb,sheet=1,diff_genes_links,startCol = 2,startRow = 2)
 saveWorkbook(wb,"bla.xlsx",overwrite = T)
 
+eSet1 <- usuniecie_sond(eSet)
+
+tabletest<-summary_table(eSet1, klasy=c("NORMAL","SQUAMOUS"),method='holm', sort_criterion="p_val",number = 20)
+
 source("geneset.heatmap.R")
-cieplamapa <- geneset.heatmap(eSet,test,"KOBAYASHI_EGFR_SIGNALING_24HR_DN")
+cieplamapa <- geneset.heatmap(eSet,test,"WNT_SIGNALING",classes = c("ADENO","SQUAMOUS"))
+
+cieplamapa1<-geneset.heatmap(eSet,test,geneset=as.character(tabletest[[1]]$SYMBOL),classes = c("NORMAL","SQUAMOUS"))
+
 
