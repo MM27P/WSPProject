@@ -11,52 +11,39 @@ usuniecie_sond = function(ExprSet){
 }
   #return (nowy_ExprSet)
   
-  summary_table=function(nowy_ExprSet, method, sort_criterion, col_nr, sep){
-    adeno=which(pData(ExprSet)$CLASS=='ADENO')
-    squamous=which(pData(ExprSet)$CLASS=='SQUAMOUS')
-    expr=exprs(nowy_ExprSet)
-    sr_A=rowMeans(expr[,adeno])
-    sr_S=rowMeans(expr[,squamous])
-    FC=sr_A/sr_S
-    statistic=apply(expr,1,function(x) t.test(x[adeno],x[squamous])$statistic) 
-    p_wartosc=apply(expr,1,function(x) t.test(x[adeno],x[squamous])$p.val)
-    p_wartosc_skorygowane=p.adjust(p_wartosc, method = method)
-    symbol=unlist(mget(featureNames(ExprSet),env=gahgu95av2SYMBOL)) 
-    genNames=unlist(mget(featureNames(ExprSet),env=gahgu95av2GENENAME))
-    TAB=array(dim=c(dim(expr)[1],9))
-    colnames(TAB)=c("FerrariID","Symbol","opis","fold_change","srednia_w_gr_ADENO","srednia_w_gr_NORMAL","Wartosc_statystyki_t",
-                    "p-wartosc","skorygowana_p-wartosc")
-    TAB[,1]=featureNames(ExprSet)
-    TAB[,2]=symbol
-    TAB[,3]=genNames
-    TAB[,4]=FC
-    TAB[,5]=sr_A
-    TAB[,6]=sr_S
-    TAB[,7]=statistic
-    TAB[,8]=p_wartosc
-    TAB[,9]=p_wartosc_skorygowane
+  summary_table=function(ExprSet,klasy, method, sort_criterion, threshold = NULL, number =NULL){
+    # sort_criterion  - nazwa kolumny po której sortujemy (FoldChange, p_val, p_val_adjusted)
+    klasa1 = which(pData(ExprSet)$CLASS==klasy[1])
+    klasa2 = which(pData(ExprSet)$CLASS==klasy[2])
+    expr=exprs(ExprSet)
+    sr1=rowMeans(expr[,klasa1])
+    sr2=rowMeans(expr[,klasa2])
+    FC=sr1-sr2
+    statistic=apply(expr,1,function(x) t.test(x[klasa1],x[klasa2])$statistic) 
+    p_wartosc=apply(expr,1,function(x) t.test(x[klasa1],x[klasa2])$p.val)
+    p_val_adjusted=p.adjust(p_wartosc, method = method)
+    TAB<-featureData(ExprSet)@data
+    TAB$FoldChange<-FC
+    TAB$mean_class1<-sr1
+    TAB$mean_class2<-sr2
+    TAB$t_statistic<-statistic
+    TAB$p_val<-p_wartosc
+    TAB$p_val_adjusted<-p_val_adjusted
     #zwrócić tu tabelę
-    TAB_ALL=TAB
-    head(TAB) 
-    if (sort_criterion>1){
-      ind_sort=sort(p_wartosc_skorygowane,index=TRUE)$ix
-      TAB=TAB[ind_sort[1:sort_criterion],]}
-    if (sort_criterion<1){ 
-      ind_sort=which(p_wartosc_skorygowane<sort_criterion)
+    TAB_ALL <- TAB
+
+    if (!is.null(number)){
+      TAB <- TAB[order(abs(TAB[,sort_criterion])),]
+      TAB <-TAB[1:number,]}
+    if (!is.null(threshold)){ 
+      ind_sort=which(abs(TAB[,sort_criterion])<threshold)
       TAB=TAB[ind_sort,]}
-    if (col_nr!=0){
-      ind_sort=sort(TAB[col_nr,],index=TRUE)$ix
-      TAB=TAB[ind_sort,]}
-    write.table(TAB, file="data_table.txt",sep=sep,row.names = FALSE)
-    ekspr_wybrane=expr[ind_sort,]
-    png("heatmap.png")
-    heatmap.2(ekspr_wybrane)
-    dev.off()
-    return(list(TAB,TAB_ALL))
+    expr_wybrane=expr[as.character(row.names(TAB)),]
+    return(list(TAB,TAB_ALL,expr_wybrane))
     
   }
   
+eSet1 <- usuniecie_sond(eSet)
 
-
-summary_table(ExprSet, method='holm', sort_criterion=15, col_nr=5, sep=',')
+tabletest<-summary_table(eSet1, klasy=c("ADENO","SQUAMOUS"),method='holm', sort_criterion="p_val",threshold=0.01 )
 

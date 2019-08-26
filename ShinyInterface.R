@@ -1,6 +1,14 @@
 library(shiny)
 library(shinyWidgets)
-library(ggplot2) 
+library(shinyalert)
+library(shinyFiles)
+library(xlsx)
+library(ggplot2)
+library(d3heatmap)
+library(pixiedust)
+library(dplyr)
+options(pixiedust_print_method = "html")
+
 source("UI.R")
 source("Server.R")
 

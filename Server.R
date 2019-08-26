@@ -1,56 +1,87 @@
-test = c("set12", "set22", "set32", "set42", "set52") 
+n1 <- 100
+n2 <- 100
+nr <- 30
+nc <- 30
+set.seed(1)
+x <- matrix(rnorm(n1), nrow=nr, ncol=nc)
+y <- matrix(rnorm(n2), nrow=nr, ncol=nc)
+MAT <- cor(x,y)
+
+T1 <- data.frame(Charge = c("Environmental", "Base Power Cost",
+                            "Base Adjustment Cost", "Distribution Adder",
+                            "Retail Rate Without Fuel", "Fuel Charge Adjustment",
+                            "Retail Rate With Fuel"),
+                 Summer = c(0.00303, 0.06018, 0.00492, 0.00501, 0.07314,
+                            0.02252, 0.09566),
+                 Winter = c(0.00303, 0.05707, 0.00468, 0.01264, 0.07742, 
+                            0.02252, 0.09994),
+                 Transition = c(0.00303, 0.05585, 0.00459, 0.01264,
+                                0.07611, 0.02252, 0.09863),
+                 stringsAsFactors = FALSE)
+
 
 server <- function(input, output,session) {
+  output$heatmap <- renderD3heatmap({d3heatmap(MAT)})
   
-
+  output$table1 <-
+    renderUI({
+      dust(T1) %>% 
+        sprinkle(rows = 1, 
+                 border = "bottom", 
+                 part = "head") %>% 
+        sprinkle(rows = c(5, 7),
+                 cols = 2:4,
+                 border = "top") %>% 
+        sprinkle(rows = c(5, 7),
+                 bold = TRUE) %>% 
+        sprinkle(pad = 4) %>% 
+        sprinkle_colnames(Charge = "") %>% 
+        print(asis = FALSE) %>% 
+        HTML()
+    })
   
-  #Histogram code
-  data1 <- reactive({
-    input$Ind
-  })
-  data2 <- reactive({                                                                                             
-    input$Dep
-  })
-  
-  output$BoxPlot <- renderPlot({
-    boxplot(get(data2()) ~ get(data1()) , data=mtcars)
-  })
-  
-  output$Hist <- renderPlot({
-    req(data1())
-    hist(mtcars[[data1()]])
-  }) 
-  #end
-
-  observeEvent(input$do, {  output$moreControls <- renderUI({
-    radioButtons(inputId="choice", label="Loaded sets", 
-                 choices=test) })
-  })  
-
-  observeEvent(input$do2, {
-    x <- input$choice 
-    updateRadioButtons(session, "choice",
-                       label = paste("radioButtons label", x),
-                       choices = x,
-                       selected = x
-    )
+  #LOAD EXPRES SET
+  observe({
+    file1 = input$file1
+    if (is.null(file1)) {
+      return(NULL)
     }
-  )  
+    else
+      
+      output$file2<-renderUI({fileInput("file2", "Wybierz plik z adnotacjami",
+                                        accept = NULL
+      )})
+    
+  })
+  
+  #LOAD ADNOTATIONS
+  observe({
+    file1 = input$file1
+    file2 = input$file2
+    
+    
+    if (is.null(file1) && !(is.null(file2))) {
+      shinyalert("Error!", "Nie wczytano pliku zbioru", type = "error")
+      output$file2=NULL
+      return(NULL)
+    }
+    else if(is.null(file2)){
+      return(NULL)
+    }
+    
+    showNotification("Wczytano adnotacje")
+    output$buttonTag<-renderUI({actionButton("buttonTag", "Konwersja oznaczeń")})
+    
+    
+  })
+  
+  #SAVE EXCEL
+  observe({
+    volumes <- c("UserFolder"="D:\\IO SHEET\\WSP\\WSPProject")
+    shinyFileSave(input, "save", roots=volumes, session=session)
+    fileinfo <- parseSavePath(volumes, input$save)
+
+  })
   
 
-  
-  #iamonds2 = diamonds[sample(nrow(diamonds), 1000), ]
-  output$mytable1 <- DT::renderDataTable({
-    DT::datatable(  diamonds[, input$show_vars, drop = FALSE])
-  })
-  
-  # sorted columns are colored now because CSS are attached to them
-  output$mytable2 <- DT::renderDataTable({
-    DT::datatable(mtcars, options = list(orderClasses = TRUE))
-  })
-  
-  # customize the length drop-down menu; display 5 rows per page by default
-  output$mytable3 <- DT::renderDataTable({
-    DT::datatable(iris, options = list(lengthMenu = c(5, 30, 50), pageLength = 5))
-  })
 }
