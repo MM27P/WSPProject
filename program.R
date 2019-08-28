@@ -1,4 +1,4 @@
-setwd("D:/Dokumenty/bio_sem8/wsp")
+setwd("D:\IO SHEET\WSP\WSPProject")
 BiocManager::install("affy")
 BiocManager::install("limma")
 BiocManager::install("GSA")
