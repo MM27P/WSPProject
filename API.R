@@ -1,14 +1,4 @@
 
-BiocManager::install("affy")
-BiocManager::install("limma")
-BiocManager::install("GSA")
-BiocManager::install("openxlsx")
-BiocManager::install("gplots")
-BiocManager::install("Biobase")
-BiocManager::install("msigdbr")
-BiocManager::install("affycoretools")
-BiocManager::install("pheatmap")
-BiocManager::install("genefilter")
 library(pheatmap)
 library(affy)
 library(limma)
@@ -19,41 +9,101 @@ library(Biobase)
 library(msigdbr)
 library(affycoretools)
 library(genefilter)
-BiocManager::install("hgu95av2.db")
 library(hgu95av2.db)
+source("importGeneSets.R")
 
-load_ExpSet=function(fileName){
-  
-  RMA <- readRDS("RMA.RDS")
-  eSet <- annotateEset(RMA,hgu95av2.db)
+eSetAnnotation <- function(eSet_file,description_file){
+  #zakładam że description file  i eSet file to ścieżki do esetu i opisu i że opisy są wg tego samego schematu zawsze
+  eSet <- readRDS(eSet_file)
+  eset_annotation <- eSet@annotation
+  sample_description <- read.AnnotatedDataFrame(description_file, sep="\t", header=TRUE, row.names=4, stringsAsFactors = F)
+  sampleNames(sample_description) = paste(sampleNames(sample_description), ".CEL", sep="")
+  phenoData(eSet)@data <- sample_description@data
+  annotation_package <- paste(eset_annotation,"db",sep=".")
+  require(annotation_package,character.only = T)
+  eSet <- annotateEset(eSet,get(annotation_package))
   eSet <- eSet[rowSums(is.na(featureData(eSet)@data))==0,]
   return(eSet)
-}  
+  
+}
 
 
+usuniecie_sond = function(ExprSet){
+  
+  dane_sort = sort(rowMeans(exprs(ExprSet)),index.return=T)
+  #iloœæ zestawów po reannotacji
+  sondy_zestawy= dim(ExprSet)[1]
+  #sondy do usuniêcia
+  sondy_usun =round(dim(ExprSet)[1]*0.025)
+  indeksy_usun=dane_sort$ix[c(1:sondy_usun,(sondy_zestawy-sondy_usun):sondy_zestawy)]
+  nowy_ExprSet=ExprSet[-indeksy_usun,] 
+}
 
 
-eSet <- eSet[rowSums(is.na(featureData(eSet)@data))==0,]
-phenoData(eSet)@data <- opis@data
+summary_table=function(ExprSet,klasy, method, sort_criterion, threshold = NULL, number =NULL){
+  # sort_criterion  - nazwa kolumny po której sortujemy (FoldChange, p_val, p_val_adjusted)
+  klasa1 = which(pData(ExprSet)$CLASS==klasy[1])
+  klasa2 = which(pData(ExprSet)$CLASS==klasy[2])
+  expr=exprs(ExprSet)
+  sr1=rowMeans(expr[,klasa1])
+  sr2=rowMeans(expr[,klasa2])
+  FC=sr1-sr2
+  statistic=apply(expr,1,function(x) t.test(x[klasa1],x[klasa2])$statistic) 
+  p_wartosc=apply(expr,1,function(x) t.test(x[klasa1],x[klasa2])$p.val)
+  p_val_adjusted=p.adjust(p_wartosc, method = method)
+  TAB<-featureData(ExprSet)@data
+  TAB$FoldChange<-FC
+  TAB$mean_class1<-sr1
+  TAB$mean_class2<-sr2
+  TAB$t_statistic<-statistic
+  TAB$p_val<-p_wartosc
+  TAB$p_val_adjusted<-p_val_adjusted
+  #zwrócić tu tabelę
+  TAB_ALL <- TAB
+  
+  if (!is.null(number)){
+    TAB <- TAB[order(abs(TAB[,sort_criterion])),]
+    TAB <-TAB[1:number,]}
+  if (!is.null(threshold)){ 
+    ind_sort=which(abs(TAB[,sort_criterion])<threshold)
+    TAB=TAB[ind_sort,]}
+  expr_wybrane=expr[as.character(row.names(TAB)),]
+  return(list(TAB,TAB_ALL,expr_wybrane))
+  
+}
 
-features <- featureData(eSet)@data
-expr <- exprs(eSet)
-adeno <- expr[,which(opis@data$CLASS=="ADENO")]
-squamous <- expr[,which(opis@data$CLASS=="SQUAMOUS")]
-ph <- phenoData(eSet)@data
-
-tstat <- sapply(1:nrow(adeno),function(x){t.test(adeno[x,],squamous[x,])$statistic})
-pval <- sapply(1:nrow(adeno),function(x){t.test(adeno[x,],squamous[x,])$p.val})
-pval_fdr <- p.adjust(pval, method="BH")
-
-wyniki <- features
-wyniki$t_stat <- tstat
-wyniki$pval <- pval
-wyniki$pval_adjusted <- pval_fdr
-
-p_threshold <- 0.05
-diff_genes <- wyniki[which(wyniki$pval_adjusted<p_threshold),]
-
+geneset.heatmap <- function(eSet, genesets, geneset_name = NULL,geneset = NULL,classes){
+  
+  if(is.null(geneset)){
+    if(!(geneset_name %in% names(genesets))){
+      stop("Please provide valid geneset name")
+    }
+    else
+      geneset <- genesets[[geneset_name]]
+  }
+  else
+    geneset_name <- "Wybrane geny"
+  if(all(is.na(as.numeric(geneset))))
+    gene_identifier <- "SYMBOL"
+  else
+    gene_identifier <- "ENTREZID"
+  expr <- exprs(eSet)
+  features <- featureData(eSet)@data
+  ph <- phenoData(eSet)@data
+  array_ids <- which(ph$CLASS %in% classes)
+  genes <- row.names(features[which(features[,gene_identifier] %in% geneset),])
+  heatmap_expr <- expr[genes,array_ids]
+  row.names(heatmap_expr)<-features[genes,]$SYMBOL
+  colnames(heatmap_expr)<-ph$Sample[array_ids]
+  hmcol = rev(colorRampPalette(RColorBrewer::brewer.pal(9, "RdYlGn"))(255))
+  annotation_heatmap <- data.frame(class = ph$CLASS[array_ids])
+  row.names(annotation_heatmap) <- ph$Sample[array_ids]
+  gst_heatmap<-pheatmap(heatmap_expr,col = (hmcol), main=geneset_name, annotation_col = annotation_heatmap,cluster_cols = F,scale='row')
+  print(gst_heatmap)
+  
+  
+  heatmap_expr
+}
 
 add_link <- function(x){
   ncbi_link <- paste("https://ncbi.nlm.nih.gov/gene/",x, sep = "", collapse = NULL)
@@ -81,10 +131,20 @@ RunGen=function(eSet, clases, method, sort_criterion, number)
   tabletest<-summary_table(eSet1, clases,method=method, sort_criterion=sort_criterion,number = number)
 }
 
+Transform_Exp2DataFrame = function(es) {
+  emat = t(exprs(es))
+  rownames(emat) = sampleNames(es)
+  dd = data.frame(emat)
+  return (dd);
+}
 
-source("geneset.heatmap.R")
-cieplamapa <- geneset.heatmap(eSet,test,"WNT_SIGNALING",classes = c("ADENO","SQUAMOUS"))
+GenerateHitMap = function(eSet)
+{
+  test<-importGeneSets(c("MIR","CP"),gene_identifier = "SYMBOL")
+  cieplamapa <- geneset.heatmap(eSet,test,"WNT_SIGNALING",classes = c("ADENO","SQUAMOUS"))
+  #cieplamapa1<-geneset.heatmap(eSet,test,geneset=as.character(tabletest[[1]]$SYMBOL),classes = c("NORMAL","SQUAMOUS"))
+}
 
-cieplamapa1<-geneset.heatmap(eSet,test,geneset=as.character(tabletest[[1]]$SYMBOL),classes = c("NORMAL","SQUAMOUS"))
+eset<- eSetAnnotation('D:\\IO SHEET\\WSP\\WSPProject\\RMA.RDS','D:\\IO SHEET\\WSP\\WSPProject\\datasetA_scans.txt')
 
-
+lol<-GenerateHitMap (eset)

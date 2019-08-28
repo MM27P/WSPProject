@@ -3,9 +3,9 @@ library(DT)
 
 ExpresSetConditionalPanel=conditionalPanel(id = 'ExpresSetConditionalPanel',condition="input.conditionPanel==1",
                                             
-                                            fileInput("file1", "Wybierz plik zbioru",
-                                                      accept = NULL
-                                            ),
+                                           shinyFilesButton("file1", "Wybierz plik zbioru" ,
+                                                            title = "Please select a file:", multiple = FALSE,
+                                                            buttonType = "default", class = NULL),
                                             uiOutput('file2'),
                                             uiOutput('buttonTag') 
                                             
@@ -53,8 +53,8 @@ ui <- fluidPage(
       conditionalPanel(id = 'ExpresSetConditionalPanel',condition="input.conditionPanel==1",
                        panel(
                          headerPanel("Wczytywanie"), 
-                         fileInput("file1", "Wybierz plik zbioru",
-                                   accept = NULL
+                         fileInput("file1", "Wybierz plik ze zbiorem",
+                                                           accept = c('.RDS')
                          ),
                          uiOutput('file2'),
                          uiOutput('buttonTag')
@@ -66,7 +66,7 @@ ui <- fluidPage(
                         ),
                         panel(
                                headerPanel("Selekcja"), 
-                              selectInput("method", "Metoda:",
+                               selectInput("method", "Metoda:",
                                   c("holm" = "holm",
                                   "hochberg" = "hochberg",
                                   "hommel" = "hommel",
@@ -130,7 +130,7 @@ ui <- fluidPage(
     mainPanel(
       tabsetPanel(
         id = 'conditionPanel',
-        tabPanel("Expresion Set",value=1, DT::dataTableOutput("mytable2")),
+        tabPanel("Expresion Set",value=1, DT::dataTableOutput("exprSetTable")),
         tabPanel("Tabela genów",value=2, DT::dataTableOutput("mytable1")),
         tabPanel("Wczytywanie plików",value=3),
         tabPanel("Hitmapa",value=4,d3heatmapOutput("heatmap", width = "100%", height="600px")),

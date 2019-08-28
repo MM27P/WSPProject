@@ -66,7 +66,7 @@ add_link <- function(x){
   return(ncbi_link)
 
 diff_genes_links <- sapply(as.character(diff_genes$ENTREZID),add_link)
-names(diff_genes_links) <- as.character(diff_genes$ENTREZID)
+names(diff_genxes_links) <- as.character(diff_genes$ENTREZID)
 class(diff_genes_links)<- "hyperlink"
 wb<-createWorkbook()
 

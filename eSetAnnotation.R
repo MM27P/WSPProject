@@ -13,3 +13,5 @@ eSetAnnotation <- function(eSet_file,description_file){
   eSet
   
 }
+
+eset<- eSetAnnotation('D:\\IO SHEET\\WSP\\WSPProject\\RMA.RDS','D:\\IO SHEET\\WSP\\WSPProject\\datasetA_scans.txt')

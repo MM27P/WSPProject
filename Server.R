@@ -1,6 +1,5 @@
 source("API.R")
 
-
 n1 <- 100
 n2 <- 100
 nr <- 30
@@ -24,7 +23,8 @@ T1 <- data.frame(Charge = c("Environmental", "Base Power Cost",
 
 
 server <- function(input, output,session) {
-  output$heatmap <- renderD3heatmap({d3heatmap(MAT)})
+  #output$heatmap <- renderD3heatmap({d3heatmap(MAT)})
+  
   
   output$table1 <-
     renderUI({
@@ -42,11 +42,16 @@ server <- function(input, output,session) {
         print(asis = FALSE) %>% 
         HTML()
     })
+  volumes = getVolumes()
+  observe({  
+     shinyFileChoose(input, 'file1', session=session,
+                     roots = volumes)
+  })
   
   #LOAD EXPRES SET
   observe({
     file1 = input$file1
-    if (is.null(file1)) {
+    if(is.null(input$file1)) {
       return(NULL)
     }
     else
@@ -54,6 +59,13 @@ server <- function(input, output,session) {
       output$file2<-renderUI({fileInput("file2", "Wybierz plik z adnotacjami",
                                         accept = NULL
       )})
+    
+  })
+  
+  #LoadHitmap
+  observe({
+    if (exists("exprSet")) {
+    }
     
   })
   
@@ -73,9 +85,10 @@ server <- function(input, output,session) {
     }
     
     showNotification("Wczytano adnotacje")
+    eSetAnnotation
     output$buttonTag<-renderUI({actionButton("buttonTag", "Konwersja oznaczeń")})
     
-    
+    output$heatmap <- renderD3heatmap({d3heatmap(MAT)})
   })
   
   #SAVE EXCEL
@@ -83,8 +96,17 @@ server <- function(input, output,session) {
     volumes <- c("UserFolder"="D:\\IO SHEET\\WSP\\WSPProject")
     shinyFileSave(input, "save", roots=volumes, session=session)
     fileinfo <- parseSavePath(volumes, input$save)
+    
 
   })
-  
+  #ButtonTag
 
+  observeEvent(input$buttonTag, {
+    esetPath = input$file1
+    esetPath2 =  esetPath.datapath
+    adnotationPath = input$file2
+    exprSet<<-eSetAnnotation(esetPath, adnotationPath )
+  })
+    
+  
 }

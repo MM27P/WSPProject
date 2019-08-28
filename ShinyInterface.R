@@ -23,7 +23,7 @@ source("Server.R")
 #rownames(smoke) <- c("Gen1","Gen2","Gen3")
 #smoke <- as.table(smoke)
 #prop.table(smoke)
-
+options(shiny.maxRequestSize=99999*1024^2) 
 shinyApp(ui=ui,server=server)
 
 
