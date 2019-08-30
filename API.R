@@ -27,6 +27,9 @@ eSetAnnotation <- function(eSet_file,description_file){
   
 }
 
+description<- function(fileName){
+opis = read.AnnotatedDataFrame(fileName, sep="\t", header=TRUE, row.names=4, stringsAsFactors = F)
+}
 
 usuniecie_sond = function(ExprSet){
   
@@ -120,7 +123,7 @@ SaveExcel=function(diff_genes, fileName)
   addWorksheet(wb,"workshit")
   writeData(wb,sheet=1,diff_genes)
   writeData(wb,sheet=1,diff_genes_links,startCol = 2,startRow = 2)
-  saveWorkbook(wb,"fileName",overwrite = T)
+  saveWorkbook(wb,fileName,overwrite = T)
   
 }
 
@@ -132,6 +135,7 @@ RunGen=function(eSet, clases, method, sort_criterion, number)
 }
 
 Transform_Exp2DataFrame = function(es) {
+  return (as(es,"data.frame"))
   emat = t(exprs(es))
   rownames(emat) = sampleNames(es)
   dd = data.frame(emat)
@@ -142,9 +146,37 @@ GenerateHitMap = function(eSet)
 {
   test<-importGeneSets(c("MIR","CP"),gene_identifier = "SYMBOL")
   cieplamapa <- geneset.heatmap(eSet,test,"WNT_SIGNALING",classes = c("ADENO","SQUAMOUS"))
+  return(cieplamapa)
   #cieplamapa1<-geneset.heatmap(eSet,test,geneset=as.character(tabletest[[1]]$SYMBOL),classes = c("NORMAL","SQUAMOUS"))
 }
 
-eset<- eSetAnnotation('D:\\IO SHEET\\WSP\\WSPProject\\RMA.RDS','D:\\IO SHEET\\WSP\\WSPProject\\datasetA_scans.txt')
 
-lol<-GenerateHitMap (eset)
+Rest<-function(eSet, clas1, clas2)
+{
+  opis = read.AnnotatedDataFrame("datasetA_scans.txt", sep="\t", header=TRUE, row.names=4, stringsAsFactors = F)
+  eSet <- eSet[rowSums(is.na(featureData(eSet)@data))==0,]
+  phenoData(eSet)@data <- opis@data
+  
+  features <- featureData(eSet)@data
+  adeno <- expr[,which(opis@data$CLASS==clas1)]
+  
+  expr <- exprs(eSet)
+  squamous <- expr[,which(opis@data$CLASS==clas2)]
+  ph <- phenoData(eSet)@data
+  
+  tstat <- sapply(1:nrow(adeno),function(x){t.test(adeno[x,],squamous[x,])$statistic})
+  pval <- sapply(1:nrow(adeno),function(x){t.test(adeno[x,],squamous[x,])$p.val})
+  pval_fdr <- p.adjust(pval, method="BH")
+  
+  wyniki <- features
+  wyniki$t_stat <- tstat
+  wyniki$pval <- pval
+  wyniki$pval_adjusted <- pval_fdr
+  
+  p_threshold <- 0.05
+  diff_genes <- wyniki[which(wyniki$pval_adjusted<p_threshold),]
+  return (diff_genes)
+}
+
+#eset2<- eSetAnnotation('D:\\IO SHEET\\WSP\\WSPProject\\RMA.RDS','D:\\IO SHEET\\WSP\\WSPProject\\datasetA_scans.txt')
+#Rest(eset2,'ADENO','SQUAMOUS')

@@ -42,11 +42,7 @@ server <- function(input, output,session) {
         print(asis = FALSE) %>% 
         HTML()
     })
-  volumes = getVolumes()
-  observe({  
-     shinyFileChoose(input, 'file1', session=session,
-                     roots = volumes)
-  })
+
   
   #LOAD EXPRES SET
   observe({
@@ -55,19 +51,15 @@ server <- function(input, output,session) {
       return(NULL)
     }
     else
-      
+      showNotification("Wczytano plik zbioru")
       output$file2<-renderUI({fileInput("file2", "Wybierz plik z adnotacjami",
-                                        accept = NULL
+                                        accept = c(
+                                          "text/csv",
+                                          "text/comma-separated-values,text/plain",
+                                          ".csv")
       )})
-    
   })
   
-  #LoadHitmap
-  observe({
-    if (exists("exprSet")) {
-    }
-    
-  })
   
   #LOAD ADNOTATIONS
   observe({
@@ -83,30 +75,58 @@ server <- function(input, output,session) {
     else if(is.null(file2)){
       return(NULL)
     }
+    opis<<-description(input$file2$datapath)
+    
+    output$selectClas1<-renderUI({selectInput("selectClas1", "Klasa 1:",
+                                              opis@data$CLASS
+    )})
+    output$selectClas2<-renderUI({selectInput("selectClas2", "Klasa 2:",
+                                              opis@data$CLASS
+    )})
     
     showNotification("Wczytano adnotacje")
-    eSetAnnotation
     output$buttonTag<-renderUI({actionButton("buttonTag", "Konwersja oznaczeń")})
     
-    output$heatmap <- renderD3heatmap({d3heatmap(MAT)})
+    
+    #HitMap
+     hitMap<- GenerateHitMap (exprSet)
+    #output$heatmap <- renderD3heatmap({d3heatmap(MAT)})
+     output$heatmap <- renderD3heatmap({d3heatmap( hitMap)})
+     showNotification("Wygenerowano Hitmapę")
   })
   
   #SAVE EXCEL
-  observe({
-    volumes <- c("UserFolder"="D:\\IO SHEET\\WSP\\WSPProject")
-    shinyFileSave(input, "save", roots=volumes, session=session)
-    fileinfo <- parseSavePath(volumes, input$save)
-    
-
+  observe({volumes <- c("UserFolder"=getwd())
+  shinyFileSave(input, "save", roots=volumes, session=session)
+  fileinfo <- parseSavePath(volumes, input$save)
+ 
+   if (nrow(fileinfo) > 0) {
+    #diffGenes<- Rest(exprSet,"ADENO","SQUAMOUS")
+    SaveExcel(diffGenes,fileInfo)
+    showNotification("Zapisano zbiór od excela")
+    }
   })
+  
   #ButtonTag
 
   observeEvent(input$buttonTag, {
-    esetPath = input$file1
-    esetPath2 =  esetPath.datapath
-    adnotationPath = input$file2
+    esetPath =  input$file1$datapath
+    adnotationPath = input$file2$datapath
     exprSet<<-eSetAnnotation(esetPath, adnotationPath )
-  })
+    if(!is.null(exprSet))
+    {
+      #output$exprSetTable <- renderDataTable(Transform_Exp2DataFrame(exprSet))
+    }
     
+  })
   
+  observeEvent(input$selectClas1, {
+    updateSelectInput(session, "selectClas2",
+                      choices =  (opis@data$CLASS[opis@data$CLASS!=input$selectClas1]),
+    
+  )
+})
+  
+
+    
 }

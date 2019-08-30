@@ -1,34 +1,6 @@
 library(shiny)
 library(DT)
 
-ExpresSetConditionalPanel=conditionalPanel(id = 'ExpresSetConditionalPanel',condition="input.conditionPanel==1",
-                                            
-                                           shinyFilesButton("file1", "Wybierz plik zbioru" ,
-                                                            title = "Please select a file:", multiple = FALSE,
-                                                            buttonType = "default", class = NULL),
-                                            uiOutput('file2'),
-                                            uiOutput('buttonTag') 
-                                            
-                                            )
-
-GenConditionalPanel=conditionalPanel(id = 'GenConditionalPanel',condition="input.conditionPanel==1",
-                                            
-                                            fileInput("file1", "Wybierz plik z genami",
-                                                      accept = NULL
-                                                     ),
-                                            actionButton("button", "Run gen"),
-                                            selectInput("variable", "Variable:",
-                                                  c("holm" = "holm",
-                                                    "hochberg" = "hochberg",
-                                                    "hommel" = "hommel",
-                                                    "bonferroni"="bonferroni",
-                                                    "BH"="BH",
-                                                    "BY"="BY",
-                                                    "fdr"="fdr",
-                                                    "none"="none"
-                                                   ))
-                                            
-                                      )
 
 
 
@@ -54,7 +26,7 @@ ui <- fluidPage(
                        panel(
                          headerPanel("Wczytywanie"), 
                          fileInput("file1", "Wybierz plik ze zbiorem",
-                                                           accept = c('.RDS')
+                                                           accept = c(".RDS")
                          ),
                          uiOutput('file2'),
                          uiOutput('buttonTag')
@@ -77,6 +49,8 @@ ui <- fluidPage(
                                   "none"="none"
                                   )
                                ),
+                               uiOutput('selectClas1'),
+                               uiOutput('selectClas2'),
                               selectInput("clas1", "Klasa 1:",
                                           c("holm" = "holm",
                                             "hochberg" = "hochberg",
