@@ -1,4 +1,5 @@
-setwd("D:\\IO SHEET\\WSP\\WSPProject")
+setwd("C:/Users/Kara/Desktop/WSP project/WSPProject-feature-WebInterface_MG")
+install.packages("BiocManager")
 BiocManager::install("affy")
 BiocManager::install("limma")
 BiocManager::install("openxlsx")
@@ -26,7 +27,8 @@ cel_files <- list.files("./","*.CEL")
 description <- read.table("datasetA_scans.txt", header = TRUE, sep = "\t")
 sampleNames(opis) = paste(sampleNames(opis), ".CEL", sep="")
 opis = read.AnnotatedDataFrame("datasetA_scans.txt", sep="\t", header=TRUE, row.names=4, stringsAsFactors = F)
-
+data_Affy<-ReadAffy(filenames=sampleNames(opis), verbose=TRUE)
+RMA=rma(data_Affy)
 RMA <- readRDS("RMA.RDS")
 eSet <- annotateEset(RMA,hgu95av2.db)
 
@@ -53,12 +55,15 @@ wyniki$pval_adjusted <- pval_fdr
 p_threshold <- 0.05
 diff_genes <- wyniki[which(wyniki$pval_adjusted<p_threshold),]
   
-test<-importGeneSets(c("MIR","CP"),gene_identifier = "SYMBOL")
 source("importGenesets.R")
+test<-importGeneSets(c("MIR","CP"),gene_identifier = "SYMBOL")
+
 
 source("geneEnrichment.R")
 test_gst <- geneEnrichment(tabletest[[2]],test)
 
+
+#tu mam problem
 add_link <- function(x){
   ncbi_link <- paste("https://ncbi.nlm.nih.gov/gene/",x, sep = "", collapse = NULL)
 }
@@ -74,13 +79,14 @@ writeData(wb,sheet=1,diff_genes)
 writeData(wb,sheet=1,diff_genes_links,startCol = 2,startRow = 2)
 saveWorkbook(wb,"bla.xlsx",overwrite = T)
 eSet1 <- usuniecie_sond(eSet)
+#tu mam problem
 
 
 tabletest<-summary_table(eSet1, klasy=c("NORMAL","SQUAMOUS"),method='holm', sort_criterion="p_val",number = 20)
 
 source("geneset.heatmap.R")
 
-cieplamapa1<-geneset.heatmap(eSet,geneset=as.character(tabletest[[1]]$SYMBOL),classes = c("NORMAL","SQUAMOUS"))
-cieplamapa <- geneset.heatmap(eSet,genesets=test,"WNT_SIGNALING",classes = c("ADENO","SQUAMOUS"))
+cieplamapa1<-geneset.heatmap(eSet,test,geneset=as.character(tabletest[[1]]$SYMBOL),classes = c("NORMAL","SQUAMOUS"))
+cieplamapa <- geneset.heatmap(eSet,test,"WNT_SIGNALING",classes = c("ADENO","SQUAMOUS"))
 
 
