@@ -104,11 +104,11 @@ ui <- fluidPage(
     mainPanel(
       tabsetPanel(
         id = 'conditionPanel',
-        tabPanel("Expresion Set",value=1, DT::dataTableOutput("exprSetTable")),
-        tabPanel("Tabela genów",value=2, DT::dataTableOutput("mytable1")),
-        tabPanel("Wczytywanie plików",value=3),
-        tabPanel("Hitmapa",value=4,d3heatmapOutput("heatmap", width = "100%", height="600px")),
-        tabPanel("Excel",value=5, uiOutput("table1"))
+        tabPanel("Annotacja danych",value=1, DT::dataTableOutput("exprSetTable")),
+        tabPanel("Selekcja cech różnicujacych",value=2, DT::dataTableOutput("mytable1")),
+        tabPanel("Analiza scieżek sygnałowych",value=3),
+        tabPanel("Wyświetlanie heatmapa",value=4,d3heatmapOutput("heatmap", width = "100%", height="600px")),
+        tabPanel("Export danych",value=5, uiOutput("table1"))
       )
     )
   )

@@ -1,4 +1,4 @@
-geneset.heatmap <- function(eSet, genesets, geneset_name = NULL,geneset = NULL,classes){
+geneset.heatmap <- function(eSet, genesets=NULL, geneset_name = NULL,geneset = NULL,classes){
   
     if(is.null(geneset)){
       if(!(geneset_name %in% names(genesets))){

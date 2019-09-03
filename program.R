@@ -1,4 +1,4 @@
-setwd("D:\IO SHEET\WSP\WSPProject")
+setwd("D:\\IO SHEET\\WSP\\WSPProject")
 BiocManager::install("affy")
 BiocManager::install("limma")
 BiocManager::install("openxlsx")
@@ -26,8 +26,7 @@ cel_files <- list.files("./","*.CEL")
 description <- read.table("datasetA_scans.txt", header = TRUE, sep = "\t")
 sampleNames(opis) = paste(sampleNames(opis), ".CEL", sep="")
 opis = read.AnnotatedDataFrame("datasetA_scans.txt", sep="\t", header=TRUE, row.names=4, stringsAsFactors = F)
-data_Affy<-ReadAffy(filenames=sampleNames(opis), verbose=TRUE)
-RMA=rma(data_Affy)
+
 RMA <- readRDS("RMA.RDS")
 eSet <- annotateEset(RMA,hgu95av2.db)
 
@@ -81,7 +80,7 @@ tabletest<-summary_table(eSet1, klasy=c("NORMAL","SQUAMOUS"),method='holm', sort
 
 source("geneset.heatmap.R")
 
-cieplamapa1<-geneset.heatmap(eSet,test,geneset=as.character(tabletest[[1]]$SYMBOL),classes = c("NORMAL","SQUAMOUS"))
-cieplamapa <- geneset.heatmap(eSet,test,"WNT_SIGNALING",classes = c("ADENO","SQUAMOUS"))
+cieplamapa1<-geneset.heatmap(eSet,geneset=as.character(tabletest[[1]]$SYMBOL),classes = c("NORMAL","SQUAMOUS"))
+cieplamapa <- geneset.heatmap(eSet,genesets=test,"WNT_SIGNALING",classes = c("ADENO","SQUAMOUS"))
 
 

@@ -26,7 +26,7 @@ eSetAnnotation <- function(eSet_file,description_file){
   return(eSet)
   
 }
-
+#unique(eset@CLASS)
 description<- function(fileName){
 opis = read.AnnotatedDataFrame(fileName, sep="\t", header=TRUE, row.names=4, stringsAsFactors = F)
 }
@@ -42,7 +42,7 @@ usuniecie_sond = function(ExprSet){
   nowy_ExprSet=ExprSet[-indeksy_usun,] 
 }
 
-
+#sort criterion fold change, p value pavalue ater correction
 summary_table=function(ExprSet,klasy, method, sort_criterion, threshold = NULL, number =NULL){
   # sort_criterion  - nazwa kolumny po której sortujemy (FoldChange, p_val, p_val_adjusted)
   klasa1 = which(pData(ExprSet)$CLASS==klasy[1])
@@ -150,7 +150,7 @@ GenerateHitMap = function(eSet)
   #cieplamapa1<-geneset.heatmap(eSet,test,geneset=as.character(tabletest[[1]]$SYMBOL),classes = c("NORMAL","SQUAMOUS"))
 }
 
-
+#TO JEST ZBĘDNE
 Rest<-function(eSet, clas1, clas2)
 {
   opis = read.AnnotatedDataFrame("datasetA_scans.txt", sep="\t", header=TRUE, row.names=4, stringsAsFactors = F)
