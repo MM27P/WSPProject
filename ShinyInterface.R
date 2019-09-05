@@ -1,24 +1,9 @@
-BiocManager::install('shiny')
-library(shiny)
-BiocManager::install('shinyWidgets')
-library(shinyWidgets)
-BiocManager::install('shinyalert')
-library(shinyalert)
-BiocManager::install('shinyFiles')
-library(shinyFiles)
-BiocManager::install('xlsx')
-library(xlsx)
-BiocManager::install('ggplot2')
-library(ggplot2)
-BiocManager::install('d3heatmap')
-library(d3heatmap)
-BiocManager::install('pixiedust')
-library(pixiedust)
-BiocManager::install('dplyr')
-library(dplyr)
 
+
+source("Libraries")
+#musi byc tutaj setwd bo sie k³óci ¿e nie widzi ui i servera
+setwd('C:/Users/Kara/Desktop/Projekt/WSPProject-feature-WebInterface_MG')
 options(pixiedust_print_method = "html")
-
 source("UI.R")
 source("Server.R")
 
