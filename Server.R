@@ -204,6 +204,8 @@ server <- function(input, output,session) {
     })
     
     observeEvent(input$saveExcelSelection, {
+      
+      
       SaveExcel=input$saveExcelSelection
       
       ##chyba dobrze
@@ -266,3 +268,4 @@ server <- function(input, output,session) {
 
     
 }
+

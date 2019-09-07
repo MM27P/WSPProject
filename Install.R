@@ -9,4 +9,6 @@ BiocManager::install('shiny')
 BiocManager::install('DT')
 BiocManager::install('shinyWidgets')
 BiocManager::install('shinyjs')
+BiocManager::install('d3heatmap')
+
 
