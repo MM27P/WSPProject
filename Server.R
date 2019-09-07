@@ -220,6 +220,27 @@ server <- function(input, output,session) {
       ###TODO ZAPISYWANEI DO EXCELA Z SCIEŻEK SYGNAŁOWYCH###
       
     })
+    
+    
+    #Run analysis
+    observeEvent(input$buttonPath, {
+      ###Ruszenie analizy scieżek
+      
+    })
+    
+    observeEvent(input$buttonPathHeatmap, {
+      fileName=input$buttonPathHeatmap
+      
+      ###GENEROWANEI HITMAPY dla selekcji genów###
+      
+    })
+    
+    observeEvent(input$saveExcelPath, {
+      fileName=input$saveExcelPath
+      
+      ###TODO ZAPISYWANEI DO EXCELA Z SELEKCJI GENÓW###
+      
+    })
 
     
 }
