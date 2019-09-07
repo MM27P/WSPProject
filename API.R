@@ -150,7 +150,7 @@ GenerateHitMap = function(eSet)
   #cieplamapa1<-geneset.heatmap(eSet,test,geneset=as.character(tabletest[[1]]$SYMBOL),classes = c("NORMAL","SQUAMOUS"))
 }
 
-#TO JEST ZBÄ˜DNE
+#TO JEST ZBÄDNE
 Rest<-function(eSet, clas1, clas2)
 {
   opis = read.AnnotatedDataFrame("datasetA_scans.txt", sep="\t", header=TRUE, row.names=4, stringsAsFactors = F)

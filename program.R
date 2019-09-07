@@ -1,4 +1,4 @@
-setwd("D:\\IO SHEET\\WSP\\WSPProject")
+setwd("C:/Repos/WSPProject")
 BiocManager::install("affy")
 BiocManager::install("limma")
 BiocManager::install("openxlsx")
@@ -35,9 +35,9 @@ eSet <- eSet[rowSums(is.na(featureData(eSet)@data))==0,]
 phenoData(eSet)@data <- opis@data
 
 features <- featureData(eSet)@data
+expr <- exprs(eSet)
 adeno <- expr[,which(opis@data$CLASS=="ADENO")]
 
-expr <- exprs(eSet)
 squamous <- expr[,which(opis@data$CLASS=="SQUAMOUS")]
 ph <- phenoData(eSet)@data
 
@@ -53,8 +53,8 @@ wyniki$pval_adjusted <- pval_fdr
 p_threshold <- 0.05
 diff_genes <- wyniki[which(wyniki$pval_adjusted<p_threshold),]
   
-test<-importGeneSets(c("MIR","CP"),gene_identifier = "SYMBOL")
 source("importGenesets.R")
+test<-importGeneSets(c("MIR","CP"),gene_identifier = "SYMBOL")
 
 source("geneEnrichment.R")
 test_gst <- geneEnrichment(tabletest[[2]],test)

@@ -7,3 +7,6 @@ BiocManager::install('pixiedust')
 BiocManager::install('dplyr')
 BiocManager::install('shiny')
 BiocManager::install('DT')
+BiocManager::install('shinyWidgets')
+BiocManager::install('shinyjs')
+

@@ -198,16 +198,15 @@ server <- function(input, output,session) {
     })
     
     observeEvent(input$buttonSelectionHeatmap, {
-      fileName=input$buttonSelectionHeatmap
+      GenerateHitMap=input$buttonSelectionHeatmap
       
-      ###GENEROWANEI HITMAPY dla selekcji genów###
-      
+##dobrze      
     })
     
     observeEvent(input$saveExcelSelection, {
-      fileName=input$saveExcelSelection
+      SaveExcel=input$saveExcelSelection
       
-      ###TODO ZAPISYWANEI DO EXCELA Z SELEKCJI GENÓW###
+      ##chyba dobrze
       
     })
     
@@ -215,28 +214,29 @@ server <- function(input, output,session) {
     
     #Load PVALUE
     observeEvent(input$loadPValue, {
-      fileName=input$loadPValue
+      geneEnrichment=input$loadPValue
       
-      ###TODO ZAPISYWANEI DO EXCELA Z SCIEŻEK SYGNAŁOWYCH###
+      ###TODO ZAPISYWANEI DO EXCELA Z SCIEŻEK SYGNA�OWYCH###
       
     })
     
     
     #Run analysis
     observeEvent(input$buttonPath, {
+      RunGen=input$buttonPAth
       ###Ruszenie analizy scieżek
       
     })
     
     observeEvent(input$buttonPathHeatmap, {
-      fileName=input$buttonPathHeatmap
+      geneset.heatmap=input$buttonPathHeatmap
       
       ###GENEROWANEI HITMAPY dla selekcji genów###
       
     })
     
     observeEvent(input$saveExcelPath, {
-      fileName=input$saveExcelPath
+      SaveExcel=input$saveExcelPath
       
       ###TODO ZAPISYWANEI DO EXCELA Z SELEKCJI GENÓW###
       
