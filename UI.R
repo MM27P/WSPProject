@@ -1,5 +1,6 @@
 library(shiny)
 library(DT)
+library(d3heatmap)
 
 
 useShinyjs()
@@ -114,8 +115,14 @@ ui <- fluidPage(
                                   actionButton("buttonPathHeatmap", "Generuj Heatmapę"),
                                   shinySaveButton("saveExcelPath", "Save file", "Save file as ...", filetype=list(xlsx="xlsx"))
                                 )
-                        )
-        
+                        ),
+       conditionalPanel(
+         id = 'HeatmapConditionalPanel',condition="input.conditionPanel==4",
+         panel(
+           d3heatmapOutput("heatmap", width = "100%", height="500px")
+         )
+         
+       )
       ),
       
       mainPanel(
@@ -123,8 +130,13 @@ ui <- fluidPage(
                          id = 'conditionPanel',
                          tabPanel("Annotacja danych",value=1, DT::dataTableOutput("exprSetTable")),
                          tabPanel("Selekcja cech różnicujacych",value=2, DT::dataTableOutput("mytable1")),
-                         tabPanel("Analiza scieżek sygnałowych",value=3)
+                         tabPanel("Analiza scieżek sygnałowych",value=3),
+                         tabPanel("Heatmaps",value=4)
+                         
+                         
                       )
-                )
+                ),
+      
+      )
   )
-)
+

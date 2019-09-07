@@ -229,7 +229,29 @@ server <- function(input, output,session) {
     })
     
     observeEvent(input$buttonPathHeatmap, {
-      geneset.heatmap=input$buttonPathHeatmap
+      class1= input$selectClas1
+      class2= input$selectClas2
+      genesets=NULL
+      geneset_name=NULL
+      geneset=NULL
+      
+      if(input$chooseMode=='genesets')
+      {
+        genesets=input$obs
+      }
+      else if(input$chooseMode=='geneset_name')
+      {
+        geneset_name=input$obs
+      }
+      else if(input$chooseMode=='geneset')
+      {
+        geneset=input$obs
+      }
+
+      resultheatmap=geneset.heatmap(eSet,genesets,geneset_name,geneset,klasy=c(class1,class2))
+      #geneset.heatmap=input$buttonPathHeatmap
+      
+      output$heatmap <- renderD3heatmap({d3heatmap(resultheatmap,colors="reds")})
       
       ###GENEROWANEI HITMAPY dla selekcji genów###
       
