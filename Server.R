@@ -141,6 +141,8 @@ server <- function(input, output,session) {
     })
     
     #TAB SELECT GENES
+    
+    #Select geneseats from file
     observeEvent(input$fileGen, {
       
         ##TODO W MIEJSCE XXX WSTAWIĆ KLASY POBRANE Z PLIKU##
@@ -195,15 +197,15 @@ server <- function(input, output,session) {
         output$buttonSaveMap<-renderUI({shinySaveButton("buttonSaveMap", "Zapisz", "Save file as ...", filetype=list(xlsx="xlsx"))})
     })
     
-    observeEvent(input$buttonSelectionHitMap, {
-      fileName=input$buttonSelectionHitMap
+    observeEvent(input$buttonSelectionHeatmap, {
+      fileName=input$buttonSelectionHeatmap
       
       ###GENEROWANEI HITMAPY dla selekcji genów###
       
     })
     
-    observeEvent(input$buttonSaveMap, {
-      fileName=input$buttonSaveMap
+    observeEvent(input$saveExcelSelection, {
+      fileName=input$saveExcelSelection
       
       ###TODO ZAPISYWANEI DO EXCELA Z SELEKCJI GENÓW###
       
@@ -211,7 +213,7 @@ server <- function(input, output,session) {
     
     #TAB PATH
     
-    #SAVE TO EXCEL
+    #Load PVALUE
     observeEvent(input$loadPValue, {
       fileName=input$loadPValue
       

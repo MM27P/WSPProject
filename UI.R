@@ -82,7 +82,11 @@ ui <- fluidPage(
                                                    ),
                                   actionButton("buttonSelection", "Selekcja")
                                  ),
-                                 uiOutput('panelEHSelection')
+                                 panel(
+                                        actionButton("buttonSelectionHeatmap", "Generuj Heatmapę"),
+                                        shinySaveButton("saveExcelSelection", "Save file", "Save file as ...", filetype=list(xlsx="xlsx"))
+                                        
+                                 )
                          ),
        conditionalPanel(
                           id = 'ExcelConditionalPanel',condition="input.conditionPanel==3",
@@ -97,16 +101,19 @@ ui <- fluidPage(
                                                                       accept = NULL
                                                                     )
                                                     )
-                                 ),
-                                 checkboxGroupInput("variable", "Geny:",
+                                  ),
+                                  checkboxGroupInput("variable", "Geny:",
                                                      c(
                                                          "H","C1","C2","CGP","CP","CP:BIOCARTA","CP:KEGG","CP:REACTOME", 
                                                          "C3","MIR","TFT","C4","CGN","CM","C5","BP","CC","MF","c6","C7"
                                                        )
-                                 ),
-                                 actionButton("buttonGen", "Run gen")
+                                  ),
+                                  actionButton("buttonPath", "Analiza")
                                ),
-                               uiOutput('panelEHPath')
+                          panel(
+                                  actionButton("buttonPathHeatmap", "Generuj Heatmapę"),
+                                  shinySaveButton("saveExcelPath", "Save file", "Save file as ...", filetype=list(xlsx="xlsx"))
+                                )
                         )
         
       ),
