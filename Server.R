@@ -18,6 +18,7 @@ server <- function(input, output,session) {
                                                 )
                                   })
     shinyjs::hide("buttonTest")
+    shinyjs::disable("file1")buttonAdd
     #End
    
   

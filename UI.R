@@ -6,7 +6,10 @@ useShinyjs()
 
 
 ui <- fluidPage(
+
   useShinyalert(),
+  shinyjs::useShinyjs(),
+  
   title = "Examples of DataTables",
   sidebarLayout(
       sidebarPanel(
@@ -30,10 +33,13 @@ ui <- fluidPage(
                             uiOutput('chooseSource'),
                             conditionalPanel(
                                                 id = 'SourceConditionalPanel1',condition="input.chooseSource=='File'",
-                                                fileInput(
-                                                            "fileGen", "Wybierz plik z genami",
-                                                             accept = NULL
-                                                          )
+                                                panel(
+                                                        headerPanel("Wczytanie pliku"),
+                                                        fileInput(
+                                                                    "fileGen", "Wybierz plik z genami",
+                                                                     accept = NULL
+                                                                  )
+                                                    )
                                             ),
                             conditionalPanel(id = 'SourceConditionalPanel2',condition="input.chooseSource=='Eset'"),
                             panel(
@@ -74,11 +80,9 @@ ui <- fluidPage(
                                                     numericInput("obs", "Wartość", 10, min = 1, max = 100),
                                                     verbatimTextOutput("value")
                                                    ),
-                                  actionButton("buttonSelection", "Selekcja"),
-                                  uiOutput('buttonSelectionHitMap'),
-                                  uiOutput('buttonSaveMap')
-                               
-                                 )
+                                  actionButton("buttonSelection", "Selekcja")
+                                 ),
+                                 uiOutput('panelEHSelection')
                          ),
        conditionalPanel(
                           id = 'ExcelConditionalPanel',condition="input.conditionPanel==3",
@@ -86,10 +90,13 @@ ui <- fluidPage(
                                   uiOutput('chooseSource2'),
                                   conditionalPanel(
                                                     id = 'LoadPValueFile',condition="input.chooseSource2=='File'",
-                                                    fileInput(
-                                                                "loadPValue", "Wybierz plik z p wartościami",
-                                                                accept = NULL
-                                                              )
+                                                    panel(
+                                                          headerPanel("Wczytanie z pliku"), 
+                                                          fileInput(
+                                                                      "loadPValue", "Wybierz plik z p wartościami",
+                                                                      accept = NULL
+                                                                    )
+                                                    )
                                  ),
                                  checkboxGroupInput("variable", "Geny:",
                                                      c(
@@ -98,7 +105,8 @@ ui <- fluidPage(
                                                        )
                                  ),
                                  actionButton("buttonGen", "Run gen")
-                               )
+                               ),
+                               uiOutput('panelEHPath')
                         )
         
       ),
