@@ -71,21 +71,6 @@ server <- function(input, output,session) {
       else if(is.null(file2)){
             return(NULL)
       }
-      
-      opis<<-description(input$file2$datapath)
-      
-      output$selectClas1<-renderUI({
-                                    selectInput(
-                                                   "selectClas1", "Klasa 1:",
-                                                   opis@data$CLASS
-                                                )
-                                  })
-      output$selectClas2<-renderUI({
-                                    selectInput(
-                                                  "selectClas2", "Klasa 2:",
-                                                  opis@data$CLASS
-                                               )
-                                  })
 
       showNotification("Wczytano adnotacje")
       output$buttonTag<-renderUI({actionButton("buttonTag", "Konwersja oznaczeń")})
@@ -116,6 +101,21 @@ server <- function(input, output,session) {
         #output$exprSetTable <- renderDataTable(Transform_Exp2DataFrame(exprSet))
       }
       showNotification("Dokoano konwersji oznaczeń")
+      
+      opis<<-description(input$file2$datapath)
+      
+      output$selectClas1<-renderUI({
+        selectInput(
+          "selectClas1", "Klasa 1:",
+          opis@data$CLASS
+        )
+      })
+      output$selectClas2<-renderUI({
+        selectInput(
+          "selectClas2", "Klasa 2:",
+          opis@data$CLASS
+        )
+      })
     })
     
     #TAB SELECT GENES
@@ -152,7 +152,7 @@ server <- function(input, output,session) {
         
         ##TODO NIE WIEM CO Z TYM RESULTEM ZROBIC##
         ##PLUS NIE WIEM co ma byc tym expressetem gdy wczytujemy z pliku, chyba że ta metoda ma działać tylko przy wczytywaniu z pliku
-        result= summary_table(ExprSet,klasy=c(class1,class2), method, sort_criterion, threshold, number)
+        resultSelect<<- summary_table(ExprSet,klasy=c(class1,class2), method, sort_criterion, threshold, number)
         showNotification("Dokonano selekcji")
         #Add buttons for generate hitmap i save to excel
         output$chooseSource2<-renderUI({
@@ -169,9 +169,11 @@ server <- function(input, output,session) {
     })
     
     observeEvent(input$buttonSelectionHeatmap, {
+      class1= input$selectClas1
+      class2= input$selectClas2
       
-      resultheatmapy=GenerateHitMap(eSet)
-      output$heatmap <- renderD3heatmap({d3heatmap(resultheatmapy,colors="blues")})
+      resultheatmapy=geneset.heatmap(exprSet, geneset = as.character(resultSelect[[1]]$SYMBOL),classes=c(class1,class2))
+      output$heatmap <- renderD3heatmap({resultheatmapy})
       
 ##dobrze      
     })
@@ -223,7 +225,7 @@ server <- function(input, output,session) {
         geneset=input$obs
       }
 
-      resultheatmap=geneset.heatmap(eSet,genesets,geneset_name,geneset,klasy=c(class1,class2))
+      resultheatmap=geneset.heatmap(eSet,genesets,geneset_name,geneset,classes=c(class1,class2))
       #geneset.heatmap=input$buttonPathHeatmap
       
       output$heatmap <- renderD3heatmap({d3heatmap(resultheatmap,colors="reds")})
