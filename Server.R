@@ -172,8 +172,9 @@ server <- function(input, output,session) {
       class1= input$selectClas1
       class2= input$selectClas2
       
+      
       resultheatmapy=geneset.heatmap(exprSet, geneset = as.character(resultSelect[[1]]$SYMBOL),classes=c(class1,class2))
-      output$heatmap <- renderD3heatmap({resultheatmapy})
+      output$heatmap <-renderPlot({ resultheatmapy})
       
 ##dobrze      
     })
