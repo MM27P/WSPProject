@@ -25,7 +25,7 @@ ui <- fluidPage(
                                    uiOutput('file2'),
                                    uiOutput('buttonTag'),
                                    actionButton("buttonAdd", "Dodaj"),
-                                   actionButton("buttonDelete", "Usuń"),
+                                   actionButton("buttonDelete", "Usun�"),
                                    uiOutput('Test')
                                 )
                          ),
@@ -78,13 +78,13 @@ ui <- fluidPage(
                                                ),
                                   conditionalPanel(
                                                     id = 'ModeConditionalPanel',condition="input.chooseMode=='number' || input.chooseMode=='treshold'",
-                                                    numericInput("obs", "Wartość", 10, min = 1, max = 100),
+                                                    numericInput("obs", "Wartosc", 10, min = 1, max = 100),
                                                     verbatimTextOutput("value")
                                                    ),
                                   actionButton("buttonSelection", "Selekcja")
                                  ),
                                  panel(
-                                        actionButton("buttonSelectionHeatmap", "Generuj Heatmapę"),
+                                        actionButton("buttonSelectionHeatmap", "Generuj Heatmapa"),
                                         shinySaveButton("saveExcelSelection", "Save file", "Save file as ...", filetype=list(xlsx="xlsx"))
                                         
                                  )
@@ -98,7 +98,7 @@ ui <- fluidPage(
                                                     panel(
                                                           headerPanel("Wczytanie z pliku"), 
                                                           fileInput(
-                                                                      "loadPValue", "Wybierz plik z p wartościami",
+                                                                      "loadPValue", "Wybierz plik z p wartosciami",
                                                                       accept = NULL
                                                                     )
                                                     )
@@ -112,7 +112,7 @@ ui <- fluidPage(
                                   actionButton("buttonPath", "Analiza")
                                ),
                           panel(
-                                  actionButton("buttonPathHeatmap", "Generuj Heatmapę"),
+                                  actionButton("buttonPathHeatmap", "Generuj Heatmapa"),
                                   shinySaveButton("saveExcelPath", "Save file", "Save file as ...", filetype=list(xlsx="xlsx"))
                                 )
                         ),
@@ -129,8 +129,8 @@ ui <- fluidPage(
           tabsetPanel(
                          id = 'conditionPanel',
                          tabPanel("Annotacja danych",value=1, DT::dataTableOutput("exprSetTable")),
-                         tabPanel("Selekcja cech różnicujacych",value=2, DT::dataTableOutput("mytable1")),
-                         tabPanel("Analiza scieżek sygnałowych",value=3),
+                         tabPanel("Selekcja cech roznicujacych",value=2, DT::dataTableOutput("mytable1")),
+                         tabPanel("Analiza sciezek sygnalowych",value=3),
                          tabPanel("Heatmaps",value=4)
                          
                          
