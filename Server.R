@@ -17,8 +17,6 @@ server <- function(input, output,session) {
                                                   c("Wczytaj z pliku" = "File")
                                                 )
                                   })
-    shinyjs::hide("buttonTest")
-    shinyjs::disable("file1")buttonAdd
     #End
    
   
