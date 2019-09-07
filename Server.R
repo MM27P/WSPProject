@@ -198,7 +198,9 @@ server <- function(input, output,session) {
     })
     
     observeEvent(input$buttonSelectionHeatmap, {
-      GenerateHitMap=input$buttonSelectionHeatmap
+      
+      resultheatmapy=GenerateHitMap(eSet)
+      output$heatmap <- renderD3heatmap({d3heatmap(resultheatmapy,colors="blues")})
       
 ##dobrze      
     })
