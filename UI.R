@@ -53,15 +53,14 @@ ui <- fluidPage(
                                                    selectInput(
                                                                 "criterion", "Kryterium sortowania:",
                                                                  c(
-                                                                    "fold_change" = "0",
-                                                                    "p_value"="1",
-                                                                    "P_value_po_korekcji_FDR"="2"
+                                                                    "fold change" = "FoldChange",
+                                                                    "p value"="p_val",
+                                                                    "P value po korekcji_FDR"="p_val_adjusted"
                                                                    )
                                                               ),
                                                    radioButtons(
                                                                 "chooseMode", "Filtracja:",
                                                                 c(
-                                                                     "Nic" = "none",
                                                                      "Zakres" = "number",
                                                                      "Granica" = "treshold"
                                                                   )

@@ -142,15 +142,8 @@ Transform_Exp2DataFrame = function(es) {
   return (dd);
 }
 
-GenerateHitMap = function(eSet)
-{
-  test<-importGeneSets(c("MIR","CP"),gene_identifier = "SYMBOL")
-  cieplamapa <- geneset.heatmap(eSet,test,"WNT_SIGNALING",classes = c("ADENO","SQUAMOUS"))
-  return(cieplamapa)
-  #cieplamapa1<-geneset.heatmap(eSet,test,geneset=as.character(tabletest[[1]]$SYMBOL),classes = c("NORMAL","SQUAMOUS"))
-}
 
-#TO JEST ZBÄDNE
+#TO JEST ZB?DNE
 Rest<-function(eSet, clas1, clas2)
 {
   opis = read.AnnotatedDataFrame("datasetA_scans.txt", sep="\t", header=TRUE, row.names=4, stringsAsFactors = F)

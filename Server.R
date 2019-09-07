@@ -180,7 +180,7 @@ server <- function(input, output,session) {
       
       
       SaveExcel=input$saveExcelSelection
-      
+      SaveExcel(item,SaveExcel)
       ##chyba dobrze
       
     })
@@ -233,8 +233,8 @@ server <- function(input, output,session) {
     })
     
     observeEvent(input$saveExcelPath, {
-      SaveExcel=input$saveExcelPath
-      
+      SaveExcelPath=input$saveExcelPath
+      SaveExcel(item,SaveExcelPath)
       ###TODO ZAPISYWANEI DO EXCELA Z SELEKCJI GENÓW###
       
     })
