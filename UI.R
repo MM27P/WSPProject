@@ -114,7 +114,6 @@ ui <- fluidPage(
                          tabPanel("Annotacja danych",value=1, DT::dataTableOutput("exprSetTable")),
                          tabPanel("Selekcja cech roznicujacych",value=2,  plotOutput("heatmap")),
                          tabPanel("Analiza sciezek sygnalowych",value=3),
-                         tabPanel("Heatmaps",value=4)
                          
                          
                       )

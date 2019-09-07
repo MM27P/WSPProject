@@ -201,7 +201,7 @@ server <- function(input, output,session) {
     
     #Run analysis
     observeEvent(input$buttonPath, {
-      RunGen=input$buttonPAth
+    genesits=  input$variable
       ###Ruszenie analizy scieżek
       
     })
