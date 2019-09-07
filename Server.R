@@ -5,12 +5,6 @@ buttonAddded=FALSE
 server <- function(input, output,session) {
 
     #Start Render optional hide/seek elements
-    output$chooseSource<-renderUI({
-                                   radioButtons(
-                                                  "chooseSource", "P wartość",
-                                                  c("Wczytaj z pliku" = "File")
-                                                )
-    })
     output$chooseSource2<-renderUI({
                                     radioButtons(
                                                   "chooseSource2", "P wartość",
@@ -92,25 +86,9 @@ server <- function(input, output,session) {
                                                   opis@data$CLASS
                                                )
                                   })
-      output$chooseSource<-renderUI({
-                                    radioButtons(
-                                                  "chooseSource", "Źródło",
-                                                    c(
-                                                        "Plik" = "File",
-                                                        "Zbiór" = "Eset"
-                                                      )
-                                                )
-                                     })
 
       showNotification("Wczytano adnotacje")
       output$buttonTag<-renderUI({actionButton("buttonTag", "Konwersja oznaczeń")})
-
-      
-      #HitMap
-       #hitMap<- GenerateHitMap (exprSet)
-      #output$heatmap <- renderD3heatmap({d3heatmap(MAT)})
-      # output$heatmap <- renderD3heatmap({d3heatmap( hitMap)})
-      # showNotification("Wygenerowano Hitmapę")
        
     })
     
@@ -133,31 +111,14 @@ server <- function(input, output,session) {
       esetPath =  input$file1$datapath
       adnotationPath = input$file2$datapath
       exprSet<<-eSetAnnotation(esetPath, adnotationPath )
-      if(!is.null(exprSet))
+      if(is.null(exprSet))
       {
         #output$exprSetTable <- renderDataTable(Transform_Exp2DataFrame(exprSet))
       }
-      
+      showNotification("Dokoano konwersji oznaczeń")
     })
     
     #TAB SELECT GENES
-    
-    #Select geneseats from file
-    observeEvent(input$fileGen, {
-      
-        ##TODO W MIEJSCE XXX WSTAWIĆ KLASY POBRANE Z PLIKU##
-        fileName=  input$fileGen
-        output$selectClas1<-renderUI({
-                                        selectInput(
-                                                    "selectClas1", "Klasa 1:",c("XXX")
-                                        )
-                                  })
-        output$selectClas2<-renderUI({
-                                        selectInput(
-                                                    "selectClas2", "Klasa 2:",c("XXX")
-                                        )
-                                      })
-    })
     
     #CHANGE SECOND CLASS
     observeEvent(input$selectClas1, {
@@ -177,6 +138,7 @@ server <- function(input, output,session) {
         sort_criterion= input$criterion
         threshold=NULL
         number=NULL
+        ExprSet = exprSet
         
         if(input$chooseMode=='number')
         {
@@ -191,8 +153,17 @@ server <- function(input, output,session) {
         ##TODO NIE WIEM CO Z TYM RESULTEM ZROBIC##
         ##PLUS NIE WIEM co ma byc tym expressetem gdy wczytujemy z pliku, chyba że ta metoda ma działać tylko przy wczytywaniu z pliku
         result= summary_table(ExprSet,klasy=c(class1,class2), method, sort_criterion, threshold, number)
-        
+        showNotification("Dokonano selekcji")
         #Add buttons for generate hitmap i save to excel
+        output$chooseSource2<-renderUI({
+                                          radioButtons(
+                                            "chooseSource", "Źródło",
+                                            c(
+                                              "Plik" = "File",
+                                              "Zbiór" = "Eset"
+                                            )
+                                          )
+                                        })
         output$buttonSelectionHitMap<-renderUI({actionButton("buttonSelectionHitMap", "Wygeneruj hitmape")})
         output$buttonSaveMap<-renderUI({shinySaveButton("buttonSaveMap", "Zapisz", "Save file as ...", filetype=list(xlsx="xlsx"))})
     })
@@ -220,7 +191,7 @@ server <- function(input, output,session) {
     observeEvent(input$loadPValue, {
       geneEnrichment=input$loadPValue
       
-      ###TODO ZAPISYWANEI DO EXCELA Z SCIEŻEK SYGNA�OWYCH###
+      ###TODO ZAPISYWANEI DO EXCELA Z SCIEŻEK SYGNA?OWYCH###
       
     })
     

@@ -23,66 +23,57 @@ ui <- fluidPage(
                                                accept = c(".RDS")
                                    ),
                                    uiOutput('file2'),
-                                   uiOutput('buttonTag'),
-                                   actionButton("buttonAdd", "Dodaj"),
-                                   actionButton("buttonDelete", "Usun„"),
-                                   uiOutput('Test')
+                                   uiOutput('buttonTag')
                                 )
                          ),
           conditionalPanel(
                             id = 'GenConditionalPanel',condition="input.conditionPanel==2",
-                            uiOutput('chooseSource'),
                             conditionalPanel(
-                                                id = 'SourceConditionalPanel1',condition="input.chooseSource=='File'",
-                                                panel(
-                                                        headerPanel("Wczytanie pliku"),
-                                                        fileInput(
-                                                                    "fileGen", "Wybierz plik z genami",
-                                                                     accept = NULL
-                                                                  )
-                                                    )
+                                                id = 'SourceConditionalPanel1',condition="input.conditionPanel==2",
+                                                headerPanel("Nie wczytano ExprSet")
                                             ),
-                            conditionalPanel(id = 'SourceConditionalPanel2',condition="input.chooseSource=='Eset'"),
-                            panel(
-                                   headerPanel("Selekcja"), 
-                                   selectInput(
-                                                 "method", "Metoda:",
-                                                  c(
-                                                      "holm" = "holm",
-                                                      "hochberg" = "hochberg",
-                                                      "hommel" = "hommel",
-                                                      "bonferroni"="bonferroni",
-                                                      "BH"="BH",
-                                                      "BY"="BY",
-                                                      "fdr"="fdr",
-                                                      "none"="none"
-                                                   )
-                                               ),
-                                   uiOutput('selectClas1'),
-                                   uiOutput('selectClas2'),
-                                   selectInput(
-                                                "criterion", "Kryterium sortowania:",
-                                                 c(
-                                                    "fold_change" = "0",
-                                                    "p_value"="1",
-                                                    "P_value_po_korekcji_FDR"="2"
-                                                   )
-                                              ),
-                                   radioButtons(
-                                                "chooseMode", "Filtracja:",
-                                                c(
-                                                     "Nic" = "none",
-                                                     "Zakres" = "number",
-                                                     "Granica" = "treshold"
-                                                  )
-                                               ),
-                                  conditionalPanel(
-                                                    id = 'ModeConditionalPanel',condition="input.chooseMode=='number' || input.chooseMode=='treshold'",
-                                                    numericInput("obs", "Wartosc", 10, min = 1, max = 100),
-                                                    verbatimTextOutput("value")
-                                                   ),
-                                  actionButton("buttonSelection", "Selekcja")
-                                 ),
+                            conditionalPanel(id = 'SourceConditionalPanel2',condition="input.conditionPanel==2",
+                                             panel(
+                                                   headerPanel("Selekcja"), 
+                                                   selectInput(
+                                                                 "method", "Metoda:",
+                                                                  c(
+                                                                      "holm" = "holm",
+                                                                      "hochberg" = "hochberg",
+                                                                      "hommel" = "hommel",
+                                                                      "bonferroni"="bonferroni",
+                                                                      "BH"="BH",
+                                                                      "BY"="BY",
+                                                                      "fdr"="fdr",
+                                                                      "none"="none"
+                                                                   )
+                                                               ),
+                                                   uiOutput('selectClas1'),
+                                                   uiOutput('selectClas2'),
+                                                   selectInput(
+                                                                "criterion", "Kryterium sortowania:",
+                                                                 c(
+                                                                    "fold_change" = "0",
+                                                                    "p_value"="1",
+                                                                    "P_value_po_korekcji_FDR"="2"
+                                                                   )
+                                                              ),
+                                                   radioButtons(
+                                                                "chooseMode", "Filtracja:",
+                                                                c(
+                                                                     "Nic" = "none",
+                                                                     "Zakres" = "number",
+                                                                     "Granica" = "treshold"
+                                                                  )
+                                                               ),
+                                                  conditionalPanel(
+                                                                    id = 'ModeConditionalPanel',condition="input.chooseMode=='number' || input.chooseMode=='treshold'",
+                                                                    numericInput("obs", "Wartosc", 10, min = 1, max = 100),
+                                                                    verbatimTextOutput("value")
+                                                                   ),
+                                                  actionButton("buttonSelection", "Selekcja")
+                                                 )
+                                  ),
                                  panel(
                                         actionButton("buttonSelectionHeatmap", "Generuj Heatmapa"),
                                         shinySaveButton("saveExcelSelection", "Save file", "Save file as ...", filetype=list(xlsx="xlsx"))
