@@ -62,15 +62,23 @@ summary_table=function(ExprSet,klasy, method, sort_criterion, threshold = NULL, 
   TAB$p_val_adjusted<-p_val_adjusted
   #zwrócić tu tabelę
   TAB_ALL <- TAB
-  
-  if (!is.null(number)){
-    TAB <- TAB[order(abs(TAB[,sort_criterion])),]
-    TAB <-TAB[1:number,]}
-  if (!is.null(threshold)){ 
-    ind_sort=which(abs(TAB[,sort_criterion])<threshold)
-    TAB=TAB[ind_sort,]}
-  expr_wybrane=expr[as.character(row.names(TAB)),]
-  return(list(TAB,TAB_ALL,expr_wybrane))
+  if(sort_criterion=="FoldChange"){
+    if (!is.null(number)){
+      TAB <- TAB[order(-abs(TAB[,sort_criterion])),]
+      TAB <-TAB[1:number,]}
+    if (!is.null(threshold)){ 
+      ind_sort=which(abs(TAB[,sort_criterion])>threshold)
+      TAB=TAB[ind_sort,]}
+  }
+  else{
+    if (!is.null(number)){
+      TAB <- TAB[order(abs(TAB[,sort_criterion])),]
+      TAB <-TAB[1:number,]}
+    if (!is.null(threshold)){ 
+      ind_sort=which(abs(TAB[,sort_criterion])<threshold)
+      TAB=TAB[ind_sort,]}
+  }
+  return(list(TAB,TAB_ALL))
   
 }
 
