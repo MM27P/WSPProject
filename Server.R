@@ -201,7 +201,14 @@ server <- function(input, output,session) {
     
     #Run analysis
     observeEvent(input$buttonPath, {
-    genesits=  input$variable
+    
+      method = input$method2
+      fdr=input$FDR_Correction
+      paths=  input$variable
+      genes = importGeneSets(paths)
+      
+      
+      result2= geneEnrichment(resultSelect[[2]],genesets= genes, method = method, FDR_adjustment = fdr)
       ###Ruszenie analizy scieżek
       
     })

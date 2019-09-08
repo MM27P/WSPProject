@@ -99,6 +99,26 @@ ui <- fluidPage(
                                                          "C3","MIR","TFT","C4","CGN","CM","C5","BP","CC","MF","c6","C7"
                                                        )
                                   ),
+                                  selectInput(
+                                                "method2", "Metoda:",
+                                                c(
+                                                  "Set testowy" = "geneSetTest",
+                                                  "Camera" = "CAMERA"
+                                                )
+                                  ),
+                                  selectInput(
+                                                "FDR_Correction", "FDR Correction:",
+                                                c(
+                                                  "holm" = "holm",
+                                                  "hochberg" = "hochberg",
+                                                  "hommel" = "hommel",
+                                                  "bonferroni"="bonferroni",
+                                                  "BH"="BH",
+                                                  "BY"="BY",
+                                                  "fdr"="fdr",
+                                                  "none"="none"
+                                                )
+                                  ),
                                   actionButton("buttonPath", "Analiza")
                                ),
                           panel(
@@ -113,7 +133,7 @@ ui <- fluidPage(
                          id = 'conditionPanel',
                          tabPanel("Annotacja danych",value=1, DT::dataTableOutput("exprSetTable")),
                          tabPanel("Selekcja cech roznicujacych",value=2,  plotOutput("heatmap")),
-                         tabPanel("Analiza sciezek sygnalowych",value=3),
+                         tabPanel("Analiza sciezek sygnalowych",value=3)
                          
                          
                       )
