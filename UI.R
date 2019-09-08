@@ -41,7 +41,7 @@ selectionPanel2<-  panel(
   ),
   conditionalPanel(
     id = 'ModeConditionalPanel',condition="input.chooseMode=='number' || input.chooseMode=='treshold'",
-    numericInput("obs", "Wartosc", 10, min = 1, max = 100),
+    numericInput("obs", "Wartość", 10, min = 1, max = 100),
     verbatimTextOutput("value")
   ),
   actionButton("buttonSelection", "Selekcja")
@@ -57,7 +57,7 @@ pathPanel2<-panel(
   selectInput(
     "method2", "Metoda:",
     c(
-      "Set testowy" = "geneSetTest",
+      "geneSetTest" = "geneSetTest",
       "Camera" = "CAMERA"
     )
   ),
@@ -78,7 +78,7 @@ pathPanel2<-panel(
 )
 specialPanelSelect<-panel(
   headerPanel("Opcje"), 
-  actionButton("buttonSelectionHeatmap", "Generuj Heatmapa"),
+  actionButton("buttonSelectionHeatmap", "Generuj Heatmapę"),
   shinySaveButton("saveExcelSelection", "Zapisz", "Save file as ...", filetype=list(xlsx="xlsx"))
 )
 
@@ -88,7 +88,7 @@ specialPanelPath<-panel(
 )
 specialPanelPath2<-panel(
   headerPanel("Heatmapa"), 
-  actionButton("buttonPathHeatmap", "Generuj Heatmapa"),
+  actionButton("buttonPathHeatmap", "Generuj Heatmapę"),
   textInput( "pathTextBox", "Nazwa ścieżki:", value = "", width = NULL,
              placeholder = NULL)
 )
@@ -125,7 +125,7 @@ ui <- fluidPage(
         panel(
           headerPanel("Wczytanie z pliku"), 
           fileInput(
-            "loadPValue", "Wybierz plik z t wartosciami",
+            "loadPValue", "Wybierz plik z t wartościami",
             accept = c(".xlsx")
           )
         ),
@@ -141,8 +141,8 @@ ui <- fluidPage(
       tabsetPanel(
         id = 'conditionPanel',
         tabPanel("Annotacja danych",value=1, DT::dataTableOutput("exprSetTable")),
-        tabPanel("Selekcja cech roznicujacych",value=2,   d3heatmapOutput("heatmap", width = "100%", height="600px")),
-        tabPanel("Analiza sciezek sygnalowych",value=3, d3heatmapOutput("heatmap1", width = "100%", height="600px"))
+        tabPanel("Selekcja cech różnicujących",value=2,   d3heatmapOutput("heatmap", width = "100%", height="600px")),
+        tabPanel("Analiza ścieżek sygnałowych",value=3, d3heatmapOutput("heatmap1", width = "100%", height="600px"))
         
         
       )
