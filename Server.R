@@ -155,7 +155,7 @@ server <- function(input, output,session) {
         showNotification("Dokonano selekcji")
         #Add buttons for generate hitmap i save to excel
         choices= c("Selekcja" = "Eset")
-        if(exists("pathFile") && !is.null(pathFile))
+        if(exists("pvalueFile") && !is.null(pvalueFile))
         {
           choices= c("Plik"="File","Selekcja" = "Eset")
         }
@@ -190,7 +190,11 @@ server <- function(input, output,session) {
     #Load PVALUE
     observeEvent(input$loadPValue, {
       filePath= input$loadPValue$datapath
-      pathFile<<-read.xlsx(filePath)
+      if(is.null(filePath))
+      {
+        return (NULL);
+      }
+      pvalueFile<<-read.xlsx(filePath)
       
       choices= c("Plik"="File")
       if(exists("resultSelect") && !is.null(resultSelect))
@@ -227,7 +231,7 @@ server <- function(input, output,session) {
       set=NULL
       if(input$chooseSource2=="File")
       {
-        set=pathFile
+        set=pvalueFile
       }
       else if(input$chooseSource2=="Eset")
       {
@@ -236,10 +240,20 @@ server <- function(input, output,session) {
       
       set=resultSelect[[2]]
       
-      result2= geneEnrichment(set,genesets= genes, method = method, FDR_adjustment = fdr)
+      result2<<-geneEnrichment(set,genesets= genes, method = method, FDR_adjustment = fdr)
       showNotification("Dokonano analizy scieżek")
       output$specialPanelPath<-renderUI({specialPanelPath})
       
+      if(input$chooseSource2=="Eset")
+      {
+        output$specialPanelPath2<-renderUI({specialPanelPath2})
+      }
+      else
+      {
+        removeUI(
+          selector = "div:has( =#specialPanelPath2)"
+        )
+      }
 
       ###Ruszenie analizy scieżek
       
@@ -270,15 +284,6 @@ server <- function(input, output,session) {
       
     })
     
-    observeEvent(input$saveExcelPath, {
-      SaveExcelPath=input$saveExcelPath
-      SaveExcel(item,SaveExcelPath)
-      ###TODO ZAPISYWANEI DO EXCELA Z SELEKCJI GENÓW###
-      
-    })
-    
-
-    
     #SAVE EXCEL
     observe({
       
@@ -288,7 +293,7 @@ server <- function(input, output,session) {
       
       if (nrow(fileinfo) > 0) {
         SaveExcel(resultSelect[[1]],fileinfo$datapath)
-        showNotification("Zapisano zbiór do pliku Excel")
+        showNotification("Zapisano wyniki selekcji do pliku Excel")
       }
     })
     
@@ -299,9 +304,8 @@ server <- function(input, output,session) {
       fileinfo <- parseSavePath(volumes, input$saveExcelPath)
       
       if (nrow(fileinfo) > 0) {
-        #diffGenes<- Rest(exprSet,"ADENO","SQUAMOUS")
-        # SaveExcel(diffGenes,fileInfo)
-        showNotification("Zapisano zbiór od excela")
+        SaveGenesetExcel(result2, fileinfo$datapath)
+        showNotification("Zapisano wyniki analizy do pliku Excel")
       }
     })
 }

@@ -83,13 +83,15 @@ specialPanelSelect<-panel(
                           )
 
 specialPanelPath<-panel(
-                          headerPanel("Opcje"), 
-                          actionButton("buttonPathHeatmap", "Generuj Heatmapa"),
-                          textInput( "pathTextBox", "Nazwa ścieżki:", value = "", width = NULL,
-                                    placeholder = NULL),
+                          headerPanel("Excel"), 
                           shinySaveButton("saveExcelPath", "Zapisz", "Save file as ...", filetype=list(xlsx="xlsx"))
                         )
-
+specialPanelPath2<-panel(
+                          headerPanel("Heatmapa"), 
+                          actionButton("buttonPathHeatmap", "Generuj Heatmapa"),
+                          textInput( "pathTextBox", "Nazwa ścieżki:", value = "", width = NULL,
+                                     placeholder = NULL)
+)
 
 ui <- fluidPage(
 
@@ -110,7 +112,6 @@ ui <- fluidPage(
                                    uiOutput('file2'),
                                    uiOutput('buttonTag'),
                                    #to do wywalenia potem, testy
-                                   h6('kitku'),
                                    tags$img(src='kitku.png', height=50, width=50)
                                 )
                          ),
@@ -130,7 +131,8 @@ ui <- fluidPage(
                            ),
                           uiOutput('chooseSource2'),
                           uiOutput('pathPanel'),
-                          uiOutput('specialPanelPath')
+                          uiOutput('specialPanelPath'),
+                          uiOutput('specialPanelPath2')
 
                         )
       ),

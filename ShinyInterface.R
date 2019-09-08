@@ -19,7 +19,7 @@ source("Server.R")
 
 #Student wykład : Plotly, selectizeinput
 
-
+rm(list = ls())
 options(shiny.maxRequestSize=99999*1024^2) 
 options(encoding="UTF-8")
 shinyApp(ui=ui,server=server)
