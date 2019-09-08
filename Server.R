@@ -163,8 +163,8 @@ server <- function(input, output,session) {
       
       
       resultheatmapy=geneset.heatmap(exprSet, geneset = as.character(resultSelect[[1]]$SYMBOL),classes=c(class1,class2))
-      output$heatmap <-renderPlot({ resultheatmapy})
-      
+      output$heatmap <-renderIheatmap({ resultheatmapy})
+      showNotification("Wygenerowano heatmapę")
 ##dobrze      
     })
     

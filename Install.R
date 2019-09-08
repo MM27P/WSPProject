@@ -10,5 +10,5 @@ BiocManager::install('DT')
 BiocManager::install('shinyWidgets')
 BiocManager::install('shinyjs')
 BiocManager::install('d3heatmap')
-
+BiocManager::install('iheatmapr')
 

@@ -91,21 +91,27 @@ geneset.heatmap <- function(eSet, genesets=NULL, geneset_name = NULL,geneset = N
     gene_identifier <- "ENTREZID"
   expr <- exprs(eSet)
   features <- featureData(eSet)@data
+  features <- distinct(features, SYMBOL, .keep_all= TRUE)
+  expr <- expr[as.character(features$PROBEID),]
   ph <- phenoData(eSet)@data
   array_ids <- which(ph$CLASS %in% classes)
   genes <- row.names(features[which(features[,gene_identifier] %in% geneset),])
-  heatmap_expr <- expr[genes,array_ids]
-  row.names(heatmap_expr)<-features[genes,]$SYMBOL
+  heatmap_expr <- expr[as.numeric(genes),array_ids]
+  nazwy <- as.character(features[genes,]$SYMBOL)
+  row.names(heatmap_expr)<- nazwy
   colnames(heatmap_expr)<-ph$Sample[array_ids]
   hmcol = rev(colorRampPalette(RColorBrewer::brewer.pal(9, "RdYlGn"))(255))
   annotation_heatmap <- data.frame(class = ph$CLASS[array_ids])
   row.names(annotation_heatmap) <- ph$Sample[array_ids]
-  gst_heatmap<-pheatmap(heatmap_expr,col = (hmcol), main=geneset_name, annotation_col = annotation_heatmap,cluster_cols = F,scale='row')
-  print(gst_heatmap)
+  gst_heatmap<-iheatmap(heatmap_expr,colors = hmcol, name="z-score", cluster_cols="none",scale='row',
+                        cluster_rows = "hclust",col_annotation=annotation_heatmap) %>% 
+    add_col_labels(ticktext = as.character(colnames(heatmap_expr))) %>%
+    add_row_labels(ticktext = nazwy)
   
-  
-  heatmap_expr
+  gst_heatmap
 }
+
+
 
 add_link <- function(x){
   ncbi_link <- paste("https://ncbi.nlm.nih.gov/gene/",x, sep = "", collapse = NULL)

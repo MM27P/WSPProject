@@ -9,6 +9,7 @@ library(dplyr)
 library(shiny)
 library(DT)
 library(shinyjs)
+library(iheatmapr)
 options(pixiedust_print_method = "html")
 
 source("UI.R")
