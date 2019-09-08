@@ -76,18 +76,7 @@ server <- function(input, output,session) {
       output$buttonTag<-renderUI({actionButton("buttonTag", "Konwersja oznaczeń")})
        
     })
-    
-    #SAVE EXCEL
-    observe({volumes <- c("UserFolder"=getwd())
-    shinyFileSave(input, "save", roots=volumes, session=session)
-    fileinfo <- parseSavePath(volumes, input$save)
-   
-     if (nrow(fileinfo) > 0) {
-      #diffGenes<- Rest(exprSet,"ADENO","SQUAMOUS")
-      SaveExcel(diffGenes,fileInfo)
-      showNotification("Zapisano zbiór od excela")
-      }
-    })
+  
     
     #ButtonTag
   
@@ -179,14 +168,7 @@ server <- function(input, output,session) {
 ##dobrze      
     })
     
-    observeEvent(input$saveExcelSelection, {
-      
-      
-      SaveExcel=input$saveExcelSelection
-      SaveExcel(item,SaveExcel)
-      ##chyba dobrze
-      
-    })
+
     
     #TAB PATH
     
@@ -248,7 +230,34 @@ server <- function(input, output,session) {
       ###TODO ZAPISYWANEI DO EXCELA Z SELEKCJI GENÓW###
       
     })
+    
 
     
+    #SAVE EXCEL
+    observe({
+      
+      volumes <- c("UserFolder"=getwd())
+      shinyFileSave(input, "saveExcelSelection", roots=volumes, session=session)
+      fileinfo <- parseSavePath(volumes, input$saveExcelSelection)
+      
+      if (nrow(fileinfo) > 0) {
+        #diffGenes<- Rest(exprSet,"ADENO","SQUAMOUS")
+        SaveExcel(resultSelect[[1]],fileinfo$datapath)
+        showNotification("Zapisano zbiór od excela")
+      }
+    })
+    
+    observe({
+      
+      volumes <- c("UserFolder"=getwd())
+      shinyFileSave(input, "saveExcelPath", roots=volumes, session=session)
+      fileinfo <- parseSavePath(volumes, input$saveExcelPath)
+      
+      if (nrow(fileinfo) > 0) {
+        #diffGenes<- Rest(exprSet,"ADENO","SQUAMOUS")
+        # SaveExcel(diffGenes,fileInfo)
+        showNotification("Zapisano zbiór od excela")
+      }
+    })
 }
 
