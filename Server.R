@@ -202,6 +202,8 @@ server <- function(input, output,session) {
       
       
       result2= geneEnrichment(resultSelect[[2]],genesets= genes, method = method, FDR_adjustment = fdr)
+      showNotification("Dokonano analizy scieżek")
+      output$specialPanelPath<-renderUI({specialPanelPath})
       ###Ruszenie analizy scieżek
       
     })
@@ -252,7 +254,6 @@ server <- function(input, output,session) {
       fileinfo <- parseSavePath(volumes, input$saveExcelSelection)
       
       if (nrow(fileinfo) > 0) {
-        #diffGenes<- Rest(exprSet,"ADENO","SQUAMOUS")
         SaveExcel(resultSelect[[1]],fileinfo$datapath)
         showNotification("Zapisano zbiór od excela")
       }

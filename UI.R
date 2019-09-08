@@ -48,9 +48,15 @@ selectionPanel2<-  panel(
                             )
 specialPanelSelect<-panel(
                             headerPanel("Opcje"), 
-                            actionButton("buttonPathHeatmap", "Generuj Heatmapa"),
-                            shinySaveButton("saveExcelPath", "Zapisz", "Save file as ...", filetype=list(xlsx="xlsx"))
+                            actionButton("buttonSelectionHeatmap", "Generuj Heatmapa"),
+                            shinySaveButton("saveExcelSelection", "Zapisz", "Save file as ...", filetype=list(xlsx="xlsx"))
                           )
+
+specialPanelPath<-panel(
+                          headerPanel("Opcje"), 
+                          actionButton("buttonPathHeatmap", "Generuj Heatmapa"),
+                          shinySaveButton("saveExcelPath", "Zapisz", "Save file as ...", filetype=list(xlsx="xlsx"))
+                        )
 
 
 ui <- fluidPage(
