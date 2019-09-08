@@ -147,10 +147,11 @@ server <- function(input, output,session) {
             threshold=input$obs
         }
         
-        
+        classes=c(class1,class2)
         ##TODO NIE WIEM CO Z TYM RESULTEM ZROBIC##
         ##PLUS NIE WIEM co ma byc tym expressetem gdy wczytujemy z pliku, chyba że ta metoda ma działać tylko przy wczytywaniu z pliku
         resultSelect<<- summary_table(ExprSet,klasy=c(class1,class2), method, sort_criterion, threshold, number)
+        classes<<-classes
         showNotification("Dokonano selekcji")
         #Add buttons for generate hitmap i save to excel
         choices= c("Selekcja" = "Eset")
@@ -172,11 +173,10 @@ server <- function(input, output,session) {
     })
     
     observeEvent(input$buttonSelectionHeatmap, {
-      class1= input$selectClas1
-      class2= input$selectClas2
+
       
       
-      resultheatmapy=geneset.heatmap(exprSet, geneset = as.character(resultSelect[[1]]$SYMBOL),classes=c(class1,class2))
+      resultheatmapy=geneset.heatmap(exprSet, geneset = as.character(resultSelect[[1]]$SYMBOL),classes=classes)
       output$heatmap <-renderD3heatmap({ d3heatmap(resultheatmapy,colors=rev(colorRampPalette(RColorBrewer::brewer.pal(9, "RdYlGn"))(255)),
       Colv = F, scale = 'row')})
       showNotification("Wygenerowano heatmap")
@@ -223,7 +223,7 @@ server <- function(input, output,session) {
       }
       method = input$method2
       fdr=input$FDR_Correction
-      genes = importGeneSets(paths)
+      genes<<-importGeneSets(paths)
       set=NULL
       if(input$chooseSource2=="File")
       {
@@ -240,42 +240,32 @@ server <- function(input, output,session) {
       showNotification("Dokonano analizy scieżek")
       output$specialPanelPath<-renderUI({specialPanelPath})
       
-      output$chooseSource2<-renderUI({
-        radioButtons(
-          "chooseSource2", "P wartość",
-          c("Wczytaj z pliku" = "File")
-        )
-      })
+
       ###Ruszenie analizy scieżek
       
     })
     
     observeEvent(input$buttonPathHeatmap, {
-      class1= input$selectClas1
-      class2= input$selectClas2
-      genesets=NULL
-      geneset_name=NULL
-      geneset=NULL
-      
-      if(input$chooseMode=='genesets')
-      {
-        genesets=input$obs
-      }
-      else if(input$chooseMode=='geneset_name')
-      {
-        geneset_name=input$obs
-      }
-      else if(input$chooseMode=='geneset')
-      {
-        geneset=input$obs
-      }
 
-      resultheatmap=geneset.heatmap(eSet,genesets,geneset_name,geneset,classes=c(class1,class2))
+      if(input$pathTextBox %in% names(genes))
+      {
+       
+      lol=genes
+      ll2=names(genes)
+      name=input$pathTextBox
+      resultheatmapy=geneset.heatmap(exprSet, genesets = resultSelect[[2]],genes,geneset_name=input$pathTextBox,classes=c(class1,class2))
+      showNotification("Wygenerowano heatmap")
+
       #geneset.heatmap=input$buttonPathHeatmap
       
       output$heatmap1 <- renderD3heatmap({d3heatmap(resultheatmap,colors=rev(colorRampPalette(RColorBrewer::brewer.pal(9, "RdYlGn"))(255)),
                                                    Colv = F, scale = 'row')})
-      
+      }
+      else
+      {
+        shinyalert("Error!", "Nie wybrano ścieżki do heatmapy", type = "error")
+        return(NULL)
+      }
       ###GENEROWANEI HITMAPY dla selekcji genów###
       
     })
@@ -298,7 +288,7 @@ server <- function(input, output,session) {
       
       if (nrow(fileinfo) > 0) {
         SaveExcel(resultSelect[[1]],fileinfo$datapath)
-        showNotification("Zapisano zbiór od excela")
+        showNotification("Zapisano zbiór do pliku Excel")
       }
     })
     

@@ -85,6 +85,8 @@ specialPanelSelect<-panel(
 specialPanelPath<-panel(
                           headerPanel("Opcje"), 
                           actionButton("buttonPathHeatmap", "Generuj Heatmapa"),
+                          textInput( "pathTextBox", "Nazwa ścieżki:", value = "", width = NULL,
+                                    placeholder = NULL),
                           shinySaveButton("saveExcelPath", "Zapisz", "Save file as ...", filetype=list(xlsx="xlsx"))
                         )
 
