@@ -86,15 +86,12 @@ summary_table=function(ExprSet,klasy, method, sort_criterion, threshold = NULL, 
 geneset.heatmap <- function(eSet, genesets=NULL, geneset_name = NULL,geneset = NULL,classes){
   
   if(is.null(geneset)){
-    if(!(geneset_name %in% names(genesets))){
-      stop("Please provide valid geneset name")
-    }
-    else
-      geneset <- genesets[[geneset_name]]
+    geneset <- genesets[[geneset_name]]
   }
-  else
+  else{
     geneset_name <- "Wybrane geny"
     geneset <- geneset[1:100]
+  }
   if(all(is.na(as.numeric(geneset))))
     gene_identifier <- "SYMBOL"
   else

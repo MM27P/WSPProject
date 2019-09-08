@@ -260,14 +260,13 @@ server <- function(input, output,session) {
     })
     
     observeEvent(input$buttonPathHeatmap, {
-
-      if(input$pathTextBox %in% names(genes))
+      name=input$pathTextBox
+      if(name %in% names(genes))
       {
        
       lol=genes
       ll2=names(genes)
-      name=input$pathTextBox
-      resultheatmapy=geneset.heatmap(exprSet, genesets = genes, geneset_name=input$pathTextbox,classes=classes)
+      resultheatmap=geneset.heatmap(exprSet, genesets = genes, geneset_name=name,classes=classes)
       showNotification("Wygenerowano heatmap")
 
       #geneset.heatmap=input$buttonPathHeatmap
