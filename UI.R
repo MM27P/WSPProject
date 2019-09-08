@@ -23,7 +23,10 @@ ui <- fluidPage(
                                                accept = c(".RDS")
                                    ),
                                    uiOutput('file2'),
-                                   uiOutput('buttonTag')
+                                   uiOutput('buttonTag'),
+                                   #to do wywalenia potem, testy
+                                   h6('kitku'),
+                                   tags$img(src='kitku.png', height=50, width=50)
                                 )
                          ),
           conditionalPanel(

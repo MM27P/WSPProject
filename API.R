@@ -1,4 +1,4 @@
-
+setwd('D:/Projekt/WSPProject')
 library(pheatmap)
 library(affy)
 library(limma)
