@@ -37,6 +37,8 @@ importGeneSets <- function(geneset_categories,gene_identifier = "ENTREZID"){
           }
         }
       }
+      else
+        genesets <- genesets1[[1]]
       geneset_names <- unique(genesets$gs_name)
       make_genesets <- function(msigdbr_list,geneset_name,gene_id){
         if(gene_id == "ENTREZID"){
