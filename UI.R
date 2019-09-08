@@ -6,7 +6,7 @@ library(d3heatmap)
 useShinyjs()
 
 
-selectionPanel1<- panel (headerPanel("Nie wczytano ExprSet"))
+selectionPanel1<- panel (headerPanel("Nie wczytano Esetu"))
 selectionPanel2<-  panel(
                           headerPanel("Selekcja"), 
                                              selectInput(
@@ -45,7 +45,37 @@ selectionPanel2<-  panel(
                                                verbatimTextOutput("value")
                                              ),
                                              actionButton("buttonSelection", "Selekcja")
-                            )
+                                  )
+pathPanel1<- panel(headerPanel("Nie wczytano p wartości"))
+pathPanel2<-panel(
+                      checkboxGroupInput("variable", "Geny:",
+                                         c(
+                                           "H","C1","C2","CGP","CP","CP:BIOCARTA","CP:KEGG","CP:REACTOME", 
+                                           "C3","MIR","TFT","C4","CGN","CM","C5","BP","CC","MF","c6","C7"
+                                         )
+                      ),
+                      selectInput(
+                        "method2", "Metoda:",
+                        c(
+                          "Set testowy" = "geneSetTest",
+                          "Camera" = "CAMERA"
+                        )
+                      ),
+                      selectInput(
+                        "FDR_Correction", "FDR Correction:",
+                        c(
+                          "holm" = "holm",
+                          "hochberg" = "hochberg",
+                          "hommel" = "hommel",
+                          "bonferroni"="bonferroni",
+                          "BH"="BH",
+                          "BY"="BY",
+                          "fdr"="fdr",
+                          "none"="none"
+                        )
+                      ),
+                      actionButton("buttonPath", "Analiza")
+                    )
 specialPanelSelect<-panel(
                             headerPanel("Opcje"), 
                             actionButton("buttonSelectionHeatmap", "Generuj Heatmapa"),
@@ -90,46 +120,15 @@ ui <- fluidPage(
        conditionalPanel(
                           id = 'ExcelConditionalPanel',condition="input.conditionPanel==3",
                           panel(
-                                  uiOutput('chooseSource2'),
-                                  conditionalPanel(
-                                                    id = 'LoadPValueFile',condition="input.chooseSource2=='File'",
-                                                    panel(
-                                                          headerPanel("Wczytanie z pliku"), 
-                                                          fileInput(
-                                                                      "loadPValue", "Wybierz plik z p wartosciami",
-                                                                      accept = NULL
-                                                                    )
-                                                    )
-                                  ),
-                                  checkboxGroupInput("variable", "Geny:",
-                                                     c(
-                                                         "H","C1","C2","CGP","CP","CP:BIOCARTA","CP:KEGG","CP:REACTOME", 
-                                                         "C3","MIR","TFT","C4","CGN","CM","C5","BP","CC","MF","c6","C7"
-                                                       )
-                                  ),
-                                  selectInput(
-                                                "method2", "Metoda:",
-                                                c(
-                                                  "Set testowy" = "geneSetTest",
-                                                  "Camera" = "CAMERA"
-                                                )
-                                  ),
-                                  selectInput(
-                                                "FDR_Correction", "FDR Correction:",
-                                                c(
-                                                  "holm" = "holm",
-                                                  "hochberg" = "hochberg",
-                                                  "hommel" = "hommel",
-                                                  "bonferroni"="bonferroni",
-                                                  "BH"="BH",
-                                                  "BY"="BY",
-                                                  "fdr"="fdr",
-                                                  "none"="none"
-                                                )
-                                  ),
-                                  actionButton("buttonPath", "Analiza")
-                               ),
-                              uiOutput('specialPanelPath')
+                                  headerPanel("Wczytanie z pliku"), 
+                                  fileInput(
+                                    "loadPValue", "Wybierz plik z t wartosciami",
+                                    accept = c(".xlsx")
+                                  )
+                           ),
+                          uiOutput('chooseSource2'),
+                          uiOutput('pathPanel'),
+                          uiOutput('specialPanelPath')
 
                         )
       ),

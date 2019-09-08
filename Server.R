@@ -6,17 +6,15 @@ buttonAddded=FALSE
 server <- function(input, output,session) {
 
     #Start Render optional hide/seek elements
-    output$chooseSource2<-renderUI({
-                                    radioButtons(
-                                                  "chooseSource2", "P wartość",
-                                                  c("Wczytaj z pliku" = "File")
-                                                )
-                                  })
+
     output$selectPanel<-renderUI({
                                   selectionPanel1
                                   })
+    
+    output$pathPanel<-renderUI({
+                                pathPanel1
+                              })
     #End
-   
    
       
     observeEvent(input$buttonAdd, {
@@ -155,17 +153,22 @@ server <- function(input, output,session) {
         resultSelect<<- summary_table(ExprSet,klasy=c(class1,class2), method, sort_criterion, threshold, number)
         showNotification("Dokonano selekcji")
         #Add buttons for generate hitmap i save to excel
+        choices= c("Selekcja" = "Eset")
+        if(exists("pathFile") && !is.null(pathFile))
+        {
+          choices= c("Plik"="File","Selekcja" = "Eset")
+        }
         output$chooseSource2<-renderUI({
                                           radioButtons(
-                                            "chooseSource", "Źródło",
-                                            c(
-                                              "Plik" = "File",
-                                              "Zbiór" = "Eset"
-                                            )
+                                            "chooseSource2", "Źródło",
+                                            choices
                                           )
                                         })
         
         output$specialPanelSelect<-renderUI({specialPanelSelect})
+        output$pathPanel<-renderUI({
+                                      pathPanel2
+                                    })
     })
     
     observeEvent(input$buttonSelectionHeatmap, {
@@ -185,9 +188,25 @@ server <- function(input, output,session) {
     
     #Load PVALUE
     observeEvent(input$loadPValue, {
-      geneEnrichment=input$loadPValue
+      filePath= input$loadPValue$datapath
+      pathFile<<-read.xlsx(filePath)
       
-      ###TODO ZAPISYWANEI DO EXCELA Z SCIEŻEK SYGNA?OWYCH###
+      choices= c("Plik"="File")
+      if(exists("resultSelect") && !is.null(resultSelect))
+      {
+        choices= c("Plik"="File","Selekcja" = "Eset")
+      }
+      
+      output$chooseSource2<-renderUI({
+        radioButtons(
+          "chooseSource2", "Źródło",
+          choices
+        )
+      })
+      
+      output$pathPanel<-renderUI({
+        pathPanel2
+      })
       
     })
     
@@ -195,15 +214,37 @@ server <- function(input, output,session) {
     #Run analysis
     observeEvent(input$buttonPath, {
     
+      paths=  input$variable
+      if( is.null(paths))
+      {
+        shinyalert("Error!", "Nie wybrano ścieżek sygnałowych", type = "error")
+        return()
+      }
       method = input$method2
       fdr=input$FDR_Correction
-      paths=  input$variable
       genes = importGeneSets(paths)
+      set=NULL
+      if(input$chooseSource2=="File")
+      {
+        set=pathFile
+      }
+      else if(input$chooseSource2=="Eset")
+      {
+        set= resultSelect[[2]]
+      }
       
+      set=resultSelect[[2]]
       
-      result2= geneEnrichment(resultSelect[[2]],genesets= genes, method = method, FDR_adjustment = fdr)
+      result2= geneEnrichment(set,genesets= genes, method = method, FDR_adjustment = fdr)
       showNotification("Dokonano analizy scieżek")
       output$specialPanelPath<-renderUI({specialPanelPath})
+      
+      output$chooseSource2<-renderUI({
+        radioButtons(
+          "chooseSource2", "P wartość",
+          c("Wczytaj z pliku" = "File")
+        )
+      })
       ###Ruszenie analizy scieżek
       
     })

@@ -25,6 +25,7 @@ eSetAnnotation <- function(eSet_file,description_file){
   return(eSet)
   
 }
+
 #unique(eset@CLASS)
 description<- function(fileName){
 opis = read.AnnotatedDataFrame(fileName, sep="\t", header=TRUE, row.names=4, stringsAsFactors = F)
