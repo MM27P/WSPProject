@@ -6,6 +6,53 @@ library(d3heatmap)
 useShinyjs()
 
 
+selectionPanel1<- panel (headerPanel("Nie wczytano ExprSet"))
+selectionPanel2<-  panel(
+                          headerPanel("Selekcja"), 
+                                             selectInput(
+                                               "method", "Metoda:",
+                                               c(
+                                                 "holm" = "holm",
+                                                 "hochberg" = "hochberg",
+                                                 "hommel" = "hommel",
+                                                 "bonferroni"="bonferroni",
+                                                 "BH"="BH",
+                                                 "BY"="BY",
+                                                 "fdr"="fdr",
+                                                 "none"="none"
+                                               )
+                                             ),
+                                             uiOutput('selectClas1'),
+                                             uiOutput('selectClas2'),
+                                             selectInput(
+                                               "criterion", "Kryterium sortowania:",
+                                               c(
+                                                 "fold change" = "FoldChange",
+                                                 "p value"="p_val",
+                                                 "P value po korekcji_FDR"="p_val_adjusted"
+                                               )
+                                             ),
+                                             radioButtons(
+                                               "chooseMode", "Filtracja:",
+                                               c(
+                                                 "Zakres" = "number",
+                                                 "Granica" = "treshold"
+                                               )
+                                             ),
+                                             conditionalPanel(
+                                               id = 'ModeConditionalPanel',condition="input.chooseMode=='number' || input.chooseMode=='treshold'",
+                                               numericInput("obs", "Wartosc", 10, min = 1, max = 100),
+                                               verbatimTextOutput("value")
+                                             ),
+                                             actionButton("buttonSelection", "Selekcja")
+                            )
+specialPanelSelect<-panel(
+                            headerPanel("Opcje"), 
+                            actionButton("buttonPathHeatmap", "Generuj Heatmapa"),
+                            shinySaveButton("saveExcelPath", "Zapisz", "Save file as ...", filetype=list(xlsx="xlsx"))
+                          )
+
+
 ui <- fluidPage(
 
   useShinyalert(),
@@ -31,56 +78,8 @@ ui <- fluidPage(
                          ),
           conditionalPanel(
                             id = 'GenConditionalPanel',condition="input.conditionPanel==2",
-                            conditionalPanel(
-                                                id = 'SourceConditionalPanel1',condition="input.conditionPanel==2",
-                                                headerPanel("Nie wczytano ExprSet")
-                                            ),
-                            conditionalPanel(id = 'SourceConditionalPanel2',condition="input.conditionPanel==2",
-                                             panel(
-                                                   headerPanel("Selekcja"), 
-                                                   selectInput(
-                                                                 "method", "Metoda:",
-                                                                  c(
-                                                                      "holm" = "holm",
-                                                                      "hochberg" = "hochberg",
-                                                                      "hommel" = "hommel",
-                                                                      "bonferroni"="bonferroni",
-                                                                      "BH"="BH",
-                                                                      "BY"="BY",
-                                                                      "fdr"="fdr",
-                                                                      "none"="none"
-                                                                   )
-                                                               ),
-                                                   uiOutput('selectClas1'),
-                                                   uiOutput('selectClas2'),
-                                                   selectInput(
-                                                                "criterion", "Kryterium sortowania:",
-                                                                 c(
-                                                                    "fold change" = "FoldChange",
-                                                                    "p value"="p_val",
-                                                                    "P value po korekcji_FDR"="p_val_adjusted"
-                                                                   )
-                                                              ),
-                                                   radioButtons(
-                                                                "chooseMode", "Filtracja:",
-                                                                c(
-                                                                     "Zakres" = "number",
-                                                                     "Granica" = "treshold"
-                                                                  )
-                                                               ),
-                                                  conditionalPanel(
-                                                                    id = 'ModeConditionalPanel',condition="input.chooseMode=='number' || input.chooseMode=='treshold'",
-                                                                    numericInput("obs", "Wartosc", 10, min = 1, max = 100),
-                                                                    verbatimTextOutput("value")
-                                                                   ),
-                                                  actionButton("buttonSelection", "Selekcja")
-                                                 )
-                                  ),
-                                 panel(
-                                        actionButton("buttonSelectionHeatmap", "Generuj Heatmapa"),
-                                        shinySaveButton("saveExcelSelection", "Save file", "Save file as ...", filetype=list(xlsx="xlsx"))
-                                        
-                                 )
+                            uiOutput('selectPanel'),
+                            uiOutput('specialPanelSelect')
                          ),
        conditionalPanel(
                           id = 'ExcelConditionalPanel',condition="input.conditionPanel==3",
@@ -124,10 +123,8 @@ ui <- fluidPage(
                                   ),
                                   actionButton("buttonPath", "Analiza")
                                ),
-                          panel(
-                                  actionButton("buttonPathHeatmap", "Generuj Heatmapa"),
-                                  shinySaveButton("saveExcelPath", "Save file", "Save file as ...", filetype=list(xlsx="xlsx"))
-                                )
+                              uiOutput('specialPanelPath')
+
                         )
       ),
       

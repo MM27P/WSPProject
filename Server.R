@@ -1,4 +1,5 @@
 source("API.R")
+source("UI.R")
 
 buttonAddded=FALSE
 
@@ -11,9 +12,13 @@ server <- function(input, output,session) {
                                                   c("Wczytaj z pliku" = "File")
                                                 )
                                   })
+    output$selectPanel<-renderUI({
+                                  selectionPanel1
+                                  })
     #End
    
-  
+   
+      
     observeEvent(input$buttonAdd, {
       
       if(!exists("added") || is.null(added))
@@ -93,16 +98,22 @@ server <- function(input, output,session) {
       
       opis<<-description(input$file2$datapath)
       
+      output$selectPanel<-renderUI({
+        selectionPanel2
+      })
+      
       output$selectClas1<-renderUI({
         selectInput(
           "selectClas1", "Klasa 1:",
-          opis@data$CLASS
+          choices=c(opis@data$CLASS),
+          selected  =  1
         )
       })
       output$selectClas2<-renderUI({
         selectInput(
           "selectClas2", "Klasa 2:",
-          opis@data$CLASS
+          choices=c(opis@data$CLASS),
+          selected=2
         )
       })
     })
@@ -111,11 +122,11 @@ server <- function(input, output,session) {
     
     #CHANGE SECOND CLASS
     observeEvent(input$selectClas1, {
-      
+
+        
       updateSelectInput(
                         session, "selectClas2",
-                        choices =  (opis@data$CLASS[opis@data$CLASS!=input$selectClas1]),
-      
+                        choices =  (opis@data$CLASS[opis@data$CLASS!=input$selectClas1])
                         )
     })
     
@@ -153,8 +164,8 @@ server <- function(input, output,session) {
                                             )
                                           )
                                         })
-        output$buttonSelectionHitMap<-renderUI({actionButton("buttonSelectionHitMap", "Wygeneruj hitmape")})
-        output$buttonSaveMap<-renderUI({shinySaveButton("buttonSaveMap", "Zapisz", "Save file as ...", filetype=list(xlsx="xlsx"))})
+        
+        output$specialPanelSelect<-renderUI({specialPanelSelect})
     })
     
     observeEvent(input$buttonSelectionHeatmap, {
@@ -164,7 +175,7 @@ server <- function(input, output,session) {
       
       resultheatmapy=geneset.heatmap(exprSet, geneset = as.character(resultSelect[[1]]$SYMBOL),classes=c(class1,class2))
       output$heatmap <-renderIheatmap({ resultheatmapy})
-      showNotification("Wygenerowano heatmapę")
+      showNotification("Wygenerowano heatmap")
 ##dobrze      
     })
     
