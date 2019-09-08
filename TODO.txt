@@ -1,0 +1,4 @@
+-CEL FILE -> RSET FILE, RSET FILE WCZYTUJEMY
+- LISTA SCIE¯EK WPISANA NA STA£E JAKO LSITA ->http://software.broadinstitute.org/gsea/msigdb/genesets.jsp
+-Generowanie raportu po przycisku milestone
+-Wszystkie paczki w zainstalowane w g³ównej apce
