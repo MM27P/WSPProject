@@ -94,6 +94,7 @@ geneset.heatmap <- function(eSet, genesets=NULL, geneset_name = NULL,geneset = N
   }
   else
     geneset_name <- "Wybrane geny"
+    geneset <- geneset[1:100]
   if(all(is.na(as.numeric(geneset))))
     gene_identifier <- "SYMBOL"
   else
@@ -135,13 +136,22 @@ SaveExcel=function(diff_genes, fileName)
   class(diff_genes_links)<- "hyperlink"
   
   wb<-createWorkbook()
-  addWorksheet(wb,"workshit")
+  addWorksheet(wb,"Differential_genes")
   writeData(wb,sheet=1,diff_genes)
   writeData(wb,sheet=1,diff_genes_links,startCol = 2,startRow = 2)
   saveWorkbook(wb,fileName,overwrite = T)
   
 }
 
+SaveGenesetExcel=function(results, fileName)
+{
+  
+  wb<-createWorkbook()
+  addWorksheet(wb,"Affected_genesets")
+  writeData(wb,sheet=1,results)
+  saveWorkbook(wb,fileName,overwrite = T)
+  
+}
 RunGen=function(eSet, clases, method, sort_criterion, number)
 {
   eSet1 <- usuniecie_sond(eSet)
