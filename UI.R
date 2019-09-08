@@ -138,7 +138,7 @@ ui <- fluidPage(
                          id = 'conditionPanel',
                          tabPanel("Annotacja danych",value=1, DT::dataTableOutput("exprSetTable")),
                          tabPanel("Selekcja cech roznicujacych",value=2,   d3heatmapOutput("heatmap", width = "100%", height="600px")),
-                         tabPanel("Analiza sciezek sygnalowych",value=3)
+                         tabPanel("Analiza sciezek sygnalowych",value=3, d3heatmapOutput("heatmap1", width = "100%", height="600px"))
                          
                          
                       )
