@@ -6,137 +6,148 @@ library(d3heatmap)
 useShinyjs()
 
 
-ui <- fluidPage(
+selectionPanel1<- panel (headerPanel("Nie wczytano Esetu"))
+selectionPanel2<-  panel(
+  headerPanel("Selekcja"), 
+  selectInput(
+    "method", "Metoda:",
+    c(
+      "holm" = "holm",
+      "hochberg" = "hochberg",
+      "hommel" = "hommel",
+      "bonferroni"="bonferroni",
+      "BH"="BH",
+      "BY"="BY",
+      "fdr"="fdr",
+      "none"="none"
+    )
+  ),
+  uiOutput('selectClas1'),
+  uiOutput('selectClas2'),
+  selectInput(
+    "criterion", "Kryterium sortowania:",
+    c(
+      "fold change" = "FoldChange",
+      "p value"="p_val",
+      "P value po korekcji_FDR"="p_val_adjusted"
+    )
+  ),
+  radioButtons(
+    "chooseMode", "Filtracja:",
+    c(
+      "Zakres" = "number",
+      "Granica" = "treshold"
+    )
+  ),
+  conditionalPanel(
+    id = 'ModeConditionalPanel',condition="input.chooseMode=='number' || input.chooseMode=='treshold'",
+    numericInput("obs", "Wartosc", 10, min = 1, max = 100),
+    verbatimTextOutput("value")
+  ),
+  actionButton("buttonSelection", "Selekcja")
+)
+pathPanel1<- panel(headerPanel("Nie wczytano p wartości"))
+pathPanel2<-panel(
+  checkboxGroupInput("variable", "Geny:",
+                     c(
+                       "H","C1","C2","CGP","CP","CP:BIOCARTA","CP:KEGG","CP:REACTOME", 
+                       "C3","MIR","TFT","C4","CGN","CM","C5","BP","CC","MF","c6","C7"
+                     )
+  ),
+  selectInput(
+    "method2", "Metoda:",
+    c(
+      "Set testowy" = "geneSetTest",
+      "Camera" = "CAMERA"
+    )
+  ),
+  selectInput(
+    "FDR_Correction", "FDR Correction:",
+    c(
+      "holm" = "holm",
+      "hochberg" = "hochberg",
+      "hommel" = "hommel",
+      "bonferroni"="bonferroni",
+      "BH"="BH",
+      "BY"="BY",
+      "fdr"="fdr",
+      "none"="none"
+    )
+  ),
+  actionButton("buttonPath", "Analiza")
+)
+specialPanelSelect<-panel(
+  headerPanel("Opcje"), 
+  actionButton("buttonSelectionHeatmap", "Generuj Heatmapa"),
+  shinySaveButton("saveExcelSelection", "Zapisz", "Save file as ...", filetype=list(xlsx="xlsx"))
+)
 
+specialPanelPath<-panel(
+  headerPanel("Excel"), 
+  shinySaveButton("saveExcelPath", "Zapisz", "Save file as ...", filetype=list(xlsx="xlsx"))
+)
+specialPanelPath2<-panel(
+  headerPanel("Heatmapa"), 
+  actionButton("buttonPathHeatmap", "Generuj Heatmapa"),
+  textInput( "pathTextBox", "Nazwa ścieżki:", value = "", width = NULL,
+             placeholder = NULL)
+)
+
+ui <- fluidPage(
+  
   useShinyalert(),
   shinyjs::useShinyjs(),
   
   title = "Examples of DataTables",
   sidebarLayout(
-      sidebarPanel(
-          conditionalPanel(
-                           id = 'ExpresSetConditionalPanel',condition="input.conditionPanel==1",
-                           panel(
-                                   headerPanel("Wczytywanie"), 
-                                   fileInput(
-                                              "file1", "Wybierz plik ze zbiorem",
-                                               accept = c(".RDS")
-                                   ),
-                                   uiOutput('file2'),
-                                   uiOutput('buttonTag'),
-                                   actionButton("buttonAdd", "Dodaj"),
-                                   actionButton("buttonDelete", "Usuń"),
-                                   uiOutput('Test')
-                                )
-                         ),
-          conditionalPanel(
-                            id = 'GenConditionalPanel',condition="input.conditionPanel==2",
-                            uiOutput('chooseSource'),
-                            conditionalPanel(
-                                                id = 'SourceConditionalPanel1',condition="input.chooseSource=='File'",
-                                                panel(
-                                                        headerPanel("Wczytanie pliku"),
-                                                        fileInput(
-                                                                    "fileGen", "Wybierz plik z genami",
-                                                                     accept = NULL
-                                                                  )
-                                                    )
-                                            ),
-                            conditionalPanel(id = 'SourceConditionalPanel2',condition="input.chooseSource=='Eset'"),
-                            panel(
-                                   headerPanel("Selekcja"), 
-                                   selectInput(
-                                                 "method", "Metoda:",
-                                                  c(
-                                                      "holm" = "holm",
-                                                      "hochberg" = "hochberg",
-                                                      "hommel" = "hommel",
-                                                      "bonferroni"="bonferroni",
-                                                      "BH"="BH",
-                                                      "BY"="BY",
-                                                      "fdr"="fdr",
-                                                      "none"="none"
-                                                   )
-                                               ),
-                                   uiOutput('selectClas1'),
-                                   uiOutput('selectClas2'),
-                                   selectInput(
-                                                "criterion", "Kryterium sortowania:",
-                                                 c(
-                                                    "fold_change" = "0",
-                                                    "p_value"="1",
-                                                    "P_value_po_korekcji_FDR"="2"
-                                                   )
-                                              ),
-                                   radioButtons(
-                                                "chooseMode", "Filtracja:",
-                                                c(
-                                                     "Nic" = "none",
-                                                     "Zakres" = "number",
-                                                     "Granica" = "treshold"
-                                                  )
-                                               ),
-                                  conditionalPanel(
-                                                    id = 'ModeConditionalPanel',condition="input.chooseMode=='number' || input.chooseMode=='treshold'",
-                                                    numericInput("obs", "Wartość", 10, min = 1, max = 100),
-                                                    verbatimTextOutput("value")
-                                                   ),
-                                  actionButton("buttonSelection", "Selekcja")
-                                 ),
-                                 panel(
-                                        actionButton("buttonSelectionHeatmap", "Generuj Heatmapę"),
-                                        shinySaveButton("saveExcelSelection", "Save file", "Save file as ...", filetype=list(xlsx="xlsx"))
-                                        
-                                 )
-                         ),
-       conditionalPanel(
-                          id = 'ExcelConditionalPanel',condition="input.conditionPanel==3",
-                          panel(
-                                  uiOutput('chooseSource2'),
-                                  conditionalPanel(
-                                                    id = 'LoadPValueFile',condition="input.chooseSource2=='File'",
-                                                    panel(
-                                                          headerPanel("Wczytanie z pliku"), 
-                                                          fileInput(
-                                                                      "loadPValue", "Wybierz plik z p wartościami",
-                                                                      accept = NULL
-                                                                    )
-                                                    )
-                                  ),
-                                  checkboxGroupInput("variable", "Geny:",
-                                                     c(
-                                                         "H","C1","C2","CGP","CP","CP:BIOCARTA","CP:KEGG","CP:REACTOME", 
-                                                         "C3","MIR","TFT","C4","CGN","CM","C5","BP","CC","MF","c6","C7"
-                                                       )
-                                  ),
-                                  actionButton("buttonPath", "Analiza")
-                               ),
-                          panel(
-                                  actionButton("buttonPathHeatmap", "Generuj Heatmapę"),
-                                  shinySaveButton("saveExcelPath", "Save file", "Save file as ...", filetype=list(xlsx="xlsx"))
-                                )
-                        ),
-       conditionalPanel(
-         id = 'HeatmapConditionalPanel',condition="input.conditionPanel==4",
-         panel(
-           d3heatmapOutput("heatmap", width = "100%", height="500px")
-         )
-         
-       )
+    sidebarPanel(
+      conditionalPanel(
+        id = 'ExpresSetConditionalPanel',condition="input.conditionPanel==1",
+        panel(
+          headerPanel("Wczytywanie"), 
+          fileInput(
+            "file1", "Wybierz plik ze zbiorem",
+            accept = c(".RDS")
+          ),
+          uiOutput('file2'),
+          uiOutput('buttonTag'),
+          #to do wywalenia potem, testy
+          tags$img(src='kitku.png', height=50, width=50)
+        )
       ),
-      
-      mainPanel(
-          tabsetPanel(
-                         id = 'conditionPanel',
-                         tabPanel("Annotacja danych",value=1, DT::dataTableOutput("exprSetTable")),
-                         tabPanel("Selekcja cech różnicujących",value=2, DT::dataTableOutput("mytable1")),
-                         tabPanel("Analiza ścieżek sygnałowych",value=3),
-                         tabPanel("Heatmaps",value=4)
-                         
-                         
-                      )
-                ),
-      
+      conditionalPanel(
+        id = 'GenConditionalPanel',condition="input.conditionPanel==2",
+        uiOutput('selectPanel'),
+        uiOutput('specialPanelSelect')
+      ),
+      conditionalPanel(
+        id = 'ExcelConditionalPanel',condition="input.conditionPanel==3",
+        panel(
+          headerPanel("Wczytanie z pliku"), 
+          fileInput(
+            "loadPValue", "Wybierz plik z t wartosciami",
+            accept = c(".xlsx")
+          )
+        ),
+        uiOutput('chooseSource2'),
+        uiOutput('pathPanel'),
+        uiOutput('specialPanelPath'),
+        uiOutput('specialPanelPath2')
+        
       )
+    ),
+    
+    mainPanel(
+      tabsetPanel(
+        id = 'conditionPanel',
+        tabPanel("Annotacja danych",value=1, DT::dataTableOutput("exprSetTable")),
+        tabPanel("Selekcja cech roznicujacych",value=2,   d3heatmapOutput("heatmap", width = "100%", height="600px")),
+        tabPanel("Analiza sciezek sygnalowych",value=3, d3heatmapOutput("heatmap1", width = "100%", height="600px"))
+        
+        
+      )
+    ),
+    
   )
+)
 
