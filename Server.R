@@ -174,7 +174,8 @@ server <- function(input, output,session) {
       
       
       resultheatmapy=geneset.heatmap(exprSet, geneset = as.character(resultSelect[[1]]$SYMBOL),classes=c(class1,class2))
-      output$heatmap <-renderIheatmap({ resultheatmapy})
+      output$heatmap <-renderD3heatmap({ d3heatmap(resultheatmapy,colors=rev(colorRampPalette(RColorBrewer::brewer.pal(9, "RdYlGn"))(255)),
+      Colv = F, scale = 'row')})
       showNotification("Wygenerowano heatmap")
 ##dobrze      
     })
@@ -231,7 +232,8 @@ server <- function(input, output,session) {
       resultheatmap=geneset.heatmap(eSet,genesets,geneset_name,geneset,classes=c(class1,class2))
       #geneset.heatmap=input$buttonPathHeatmap
       
-      output$heatmap <- renderD3heatmap({d3heatmap(resultheatmap,colors="reds")})
+      output$heatmap1 <- renderD3heatmap({d3heatmap(resultheatmap,colors=rev(colorRampPalette(RColorBrewer::brewer.pal(9, "RdYlGn"))(255)),
+                                                   Colv = F, scale = 'row')})
       
       ###GENEROWANEI HITMAPY dla selekcji genów###
       
