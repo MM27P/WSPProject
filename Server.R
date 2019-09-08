@@ -267,7 +267,7 @@ server <- function(input, output,session) {
       lol=genes
       ll2=names(genes)
       name=input$pathTextBox
-      resultheatmapy=geneset.heatmap(exprSet, genesets = resultSelect[[2]],genes,geneset_name=input$pathTextBox,classes=c(class1,class2))
+      resultheatmapy=geneset.heatmap(exprSet, genesets = resultSelect[[2]],genes,geneset_name=input$pathTextBox,classes=classes)
       showNotification("Wygenerowano heatmap")
 
       #geneset.heatmap=input$buttonPathHeatmap
